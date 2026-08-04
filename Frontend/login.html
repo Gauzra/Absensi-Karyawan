@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Masterpackaging</title>
+    <link rel="icon" type="image/png" href="images/icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="js/api.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #100b25 0%, #ffffff 100%);
+            color: #181818;
+            line-height: 1.6;
+            font-weight: 400;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: #ffffff;
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        /* Header */
+        .login-header {
+            background: #ffffff;
+            color: rgb(32, 29, 61);
+            display: flex;
+            flex-direction: column;
+            /* susun vertikal */
+            justify-content: center;
+            /* rata tengah vertikal */
+            align-items: center;
+            /* rata tengah horizontal */
+            text-align: center;
+            height: 120px;
+            /* boleh disesuaikan */
+        }
+
+        .company-name {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #0a1931;
+            margin-bottom: 6px;
+            position: relative;
+            /* pastikan tidak absolute */
+            left: auto;
+            transform: none;
+            /* hapus efek translateX(-50%) */
+        }
+
+        .login-header h1 {
+            font-size: 1em;
+            font-weight: 500;
+            color: #0a1931;
+            margin: 0;
+        }
+
+        .login-header p {
+            font-size: 0.9em;
+            color: #0a1931;
+        }
+
+        /* Login Form */
+        .login-form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #120C38;
+            font-size: 0.9em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #bdbec0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: #f6f7f8;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3c3f43;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(79, 155, 255, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #dc3545;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Login Options */
+        .login-options {
+            margin: 25px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .divider {
+            height: 1px;
+            background: #ffffff;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .divider-text {
+            background: #ffffff;
+            padding: 0 15px;
+            color: #0a1931;
+            font-size: 0.9em;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Buttons */
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 50px;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #0a1931;
+            border: 2px solid #0a1931;
+        }
+
+        .btn-primary:hover {
+            background: #c0bdbd;
+            transform: translateY(-1px);
+        }
+
+        .btn-google {
+            background: #0a1931;
+            color: #ffffff;
+            border: #000000;
+            ;
+        }
+
+        .btn-google:hover {
+            border-color: #0a1931;
+            transform: translateY(-1px);
+        }
+
+        .btn-admin {
+            background: #0a1931;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-admin:hover {
+            background: #0a1931;
+            transform: translateY(-1px);
+        }
+
+        /* Role Selector */
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #0a1931;
+            background: #ffffff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .role-btn.active {
+            border-color: #0a1931;
+            background: #0a1931;
+            color: white;
+        }
+
+        /* Admin Form */
+        #adminForm {
+            display: none;
+        }
+
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            background: #0a1931;
+            border-top: 1px solid #ffffff;
+            color: #c3c3c4;
+            font-size: 0.8em;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #02131f;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .login-container {
+                border-radius: 12px;
+            }
+
+            .login-header {
+                padding: 20px 15px;
+            }
+
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .company-name {
+                font-size: 1.2em;
+            }
+
+            .login-form {
+                padding: 20px;
+            }
+
+            .login-btn {
+                min-height: 48px;
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <!-- Header -->
+        <div class="login-header">
+            <div class="logo-section">
+                <!-- <img src="images/logo.png" alt="Masterpackaging Logo" class="logo"> -->
+                <div class="company-name">MASTERS PACKAGING</div>
+            </div>
+            <h1>Sistem Absensi Karyawan</h1>
+        </div>
+
+        <!-- Login Form -->
+        <div class="login-form">
+            <!-- Role Selector -->
+            <div class="role-selector">
+                <button class="role-btn active" data-role="employee">Karyawan</button>
+                <button class="role-btn" data-role="admin">Admin</button>
+            </div>
+
+
+            <!-- Employee Login Form -->
+            <form id="employeeForm">
+                <!-- 🎯 FORM INPUT DENGAN PLACEHOLDER/WATERMARK -->
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label class="form-label" for="employeeEmail">User Name</label>
+                    <input type="email" class="form-input" id="employeeEmail" placeholder="Masukkan username">
+                    <div class="error-message" id="employeeEmailError">Email harus diisi</div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label class="form-label" for="employeePassword">Password</label>
+                    <input type="password" class="form-input" id="employeePassword" placeholder="Isi password">
+                    <div class="error-message" id="employeePasswordError">Password harus diisi</div>
+                </div>
+
+                <button type="button" class="login-btn btn-primary" id="employeeLoginBtn" style="margin-bottom: 15px;">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login Karyawan
+                </button>
+
+                <div class="divider">
+                    <span class="divider-text">ATAU</span>
+                </div>
+
+                <button type="button" class="login-btn btn-google" id="googleLoginBtn">
+                    <i class="fab fa-google"></i>
+                    Login dengan Google
+                </button>
+            </form>
+
+            <!-- Admin Login Form -->
+            <form id="adminForm">
+                <div class="form-group">
+                    <label class="form-label" for="adminUsername">User Name</label>
+                    <input type="text" class="form-input" id="adminUsername" placeholder="Masukkan username" value="">
+                    <div class="error-message" id="usernameError">Email harus diisi</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="adminPassword">Password</label>
+                    <input type="password" class="form-input" id="adminPassword" placeholder="Masukkan password"
+                        value="">
+                    <div class="error-message" id="passwordError">Password harus diisi</div>
+                </div>
+
+                <button type="submit" class="login-btn btn-primary" id="adminLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login sebagai Admin
+                </button>
+            </form>
+
+            <div class="divider">
+                <span class="divider-text">ATAU</span>
+            </div>
+
+            <button class="login-btn btn-admin" id="switchRoleBtn">
+                <i class="fas fa-exchange-alt"></i>
+                Login Sebagai Admin
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="login-footer">
+            &copy; 2025 Masterpackaging. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        // // 🚫 DISABLE CONSOLE IN PRODUCTION
+        // if (window.location.hostname !== 'localhost') {
+        //     console.log = function () { };
+        //     console.warn = function () { };
+        //     console.error = function () { };
+        //     console.debug = function () { };
+        // }
+
+        // DOM Elements
+        const roleButtons = document.querySelectorAll('.role-btn');
+        const employeeForm = document.getElementById('employeeForm');
+        const adminForm = document.getElementById('adminForm');
+        const switchRoleBtn = document.getElementById('switchRoleBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const adminUsername = document.getElementById('adminUsername');
+        const adminPassword = document.getElementById('adminPassword');
+
+        const employeeLoginBtn = document.getElementById('employeeLoginBtn');
+        const employeeEmail = document.getElementById('employeeEmail');
+        const employeePassword = document.getElementById('employeePassword');
+
+        // 🎯 DEBUG: Check jika elements ditemukan
+        console.log('🔍 DEBUG DOM Elements:');
+        console.log('employeeLoginBtn:', employeeLoginBtn);
+        console.log('employeeEmail:', employeeEmail);
+        console.log('employeePassword:', employeePassword);
+
+        // Current role state
+        let currentRole = 'employee';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            setupEventListeners();
+            updateUI();
+
+            // Check if already logged in
+            checkExistingLogin();
+        });
+
+        function setupEventListeners() {
+            // Role selector
+            roleButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const role = this.getAttribute('data-role');
+                    switchRole(role);
+                });
+            });
+
+            // Switch role button
+            switchRoleBtn.addEventListener('click', function () {
+                const newRole = currentRole === 'employee' ? 'admin' : 'employee';
+                switchRole(newRole);
+            });
+
+            // Google login
+            googleLoginBtn.addEventListener('click', function () {
+                // Trigger Google Sign In
+                google.accounts.id.prompt();
+            });
+
+            // Admin login form
+            adminForm.addEventListener('submit', handleAdminLogin);
+
+            // Input validation
+            adminUsername.addEventListener('input', clearError);
+            adminPassword.addEventListener('input', clearError);
+
+            // 🎯 TAMBAH INI - EVENT LISTENER UNTUK EMPLOYEE LOGIN
+            employeeLoginBtn.addEventListener('click', handleEmployeeLogin);
+            employeeEmail.addEventListener('input', clearEmployeeError);
+            employeePassword.addEventListener('input', clearEmployeeError);
+        }
+
+        function switchRole(role) {
+            currentRole = role;
+
+            // Update role buttons
+            roleButtons.forEach(btn => {
+                if (btn.getAttribute('data-role') === role) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update forms visibility
+            if (role === 'employee') {
+                employeeForm.style.display = 'block';
+                adminForm.style.display = 'none';
+                switchRoleBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Login Sebagai Admin';
+            } else {
+                employeeForm.style.display = 'none';
+                adminForm.style.display = 'block';
+                switchRoleBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Login Sebagai Karyawan';
+            }
+
+            // Clear form errors
+            clearAllErrors();
+        }
+
+        async function handleGoogleLogin() {
+            // Show loading state
+            const originalText = googleLoginBtn.innerHTML;
+            googleLoginBtn.innerHTML = '<div class="loading"></div> Membuka Google...';
+            googleLoginBtn.disabled = true;
+
+            try {
+                console.log('🚀 Memulai Google Login...');
+
+                // ✅ GUNAKAN ID TOKEN BUKAN ACCESS TOKEN
+                google.accounts.id.initialize({
+                    client_id: '262498433001-d7va64kofso6lvp2mtqup9hgvvputc9f.apps.googleusercontent.com',
+                    callback: async (response) => {
+                        console.log('🔑 Google ID Token Response:', response);
+
+                        if (!response.credential) {
+                            console.error('❌ No credential from Google');
+                            showNotification('Login Google gagal: No credential received', 'error');
+                            googleLoginBtn.innerHTML = originalText;
+                            googleLoginBtn.disabled = false;
+                            return;
+                        }
+
+                        try {
+                            console.log('✅ Dapat ID token, kirim ke backend...');
+
+                            // ✅ KIRIM ID TOKEN (credential) KE BACKEND
+                            const result = await apiService.googleLogin(response.credential);
+
+                            console.log('📦 Backend response:', result);
+
+                            if (result.success) {
+                                showNotification('Login Google berhasil!', 'success');
+                                SessionManager.createSession(result.user, result.token || result.user.id);
+
+                                setTimeout(() => {
+                                    window.location.href = 'dashboard.html';
+                                }, 1000);
+                            } else {
+                                showNotification('Login gagal: ' + result.message, 'error');
+                                googleLoginBtn.innerHTML = originalText;
+                                googleLoginBtn.disabled = false;
+                            }
+                        } catch (error) {
+                            console.error('❌ API Error:', error);
+                            showNotification('Error sistem: ' + error.message, 'error');
+                            googleLoginBtn.innerHTML = originalText;
+                            googleLoginBtn.disabled = false;
+                        }
+                    }
+                });
+
+                // ✅ TRIGGER GOOGLE ONE-TAP ATAU BUTTON
+                google.accounts.id.prompt();
+
+            } catch (error) {
+                console.error('💥 Google login error:', error);
+                showNotification('Error: ' + error.message, 'error');
+                googleLoginBtn.innerHTML = originalText;
+                googleLoginBtn.disabled = false;
+            }
+        }
+
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+
+            const email = adminUsername.value.trim();
+            const password = adminPassword.value.trim();
+
+            // Validation
+            let isValid = true;
+
+            if (!email) {
+                showError('adminUsername', 'Email harus diisi');
+                isValid = false;
+            }
+
+            if (!password) {
+                showError('adminPassword', 'Password harus diisi');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Show loading state
+            const originalText = adminLoginBtn.innerHTML;
+            adminLoginBtn.innerHTML = '<div class="loading"></div> Sedang login...';
+            adminLoginBtn.disabled = true;
+
+            try {
+                const result = await apiService.adminLogin(email, password);
+
+                console.log('📱 Mobile Login Response:', result);
+
+                if (result.success) {
+                    // 🎯 DEBUG: Tampilkan alert di HP
+                    alert(`✅ LOGIN BERHASIL!\nName: ${result.user.name}\nRole: ${result.user.role}\nRedirect dalam 3 detik...`);
+
+                    // Simpan data
+                    SessionManager.createSession(result.user, result.token || result.user.id);
+
+                    console.log('💾 Data tersimpan di localStorage');
+
+                    // Tunggu 3 detik biar bisa baca alert
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 3000);
+
+                } else {
+                    alert(`❌ LOGIN GAGAL: ${result.message}`);
+                    adminLoginBtn.innerHTML = originalText;
+                    adminLoginBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Admin login error:', error);
+                alert(`❌ ERROR: ${error.message}`);
+                adminLoginBtn.innerHTML = originalText;
+                adminLoginBtn.disabled = false;
+            }
+        }
+
+        function checkExistingLogin() {
+            // const userData = localStorage.getItem('userData');
+            // if (userData) {
+            //     const user = JSON.parse(userData);
+            //     if (user.role === 'admin') {
+            //         // Auto redirect ke admin jika sudah login
+            //         window.location.href = 'admin.html';
+            //     } else {
+            //         // Auto redirect ke dashboard jika sudah login
+            //         window.location.href = 'dashboard.html';
+            //     }
+            // }
+        }
+
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            const inputElement = document.getElementById(fieldId);
+
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            inputElement.classList.add('error');
+        }
+
+        function clearError(event) {
+            const inputElement = event.target;
+            const fieldId = inputElement.id;
+            const errorElement = document.getElementById(fieldId + 'Error');
+
+            errorElement.style.display = 'none';
+            inputElement.classList.remove('error');
+        }
+
+        function clearAllErrors() {
+            const errorElements = document.querySelectorAll('.error-message');
+            const inputElements = document.querySelectorAll('.form-input');
+
+            errorElements.forEach(element => {
+                element.style.display = 'none';
+            });
+
+            inputElements.forEach(element => {
+                element.classList.remove('error');
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#28a745' : '#dc3545'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            font-weight: 500;
+            max-width: 300px;
+        `;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        function updateUI() {
+            switchRole(currentRole);
+        }
+        async function handleEmployeeLogin() {
+            console.log('🎯 handleEmployeeLogin DIPANGGIL!');
+
+            // ✅ UBAH: email → username
+            const username = employeeEmail.value.trim();  // GANTI 'email' → 'username'
+            const password = employeePassword.value.trim();
+
+            console.log('👤 Username:', username);  // UBAH debug message
+            console.log('🔑 Password:', password);
+
+            // Validation
+            let isValid = true;
+
+            if (!username) {  // UBAH validasi
+                console.log('❌ Username kosong');
+                showEmployeeError('employeeEmail', 'Username harus diisi');  // UBAH pesan error
+                isValid = false;
+            }
+
+            if (!password) {
+                console.log('❌ Password kosong');
+                showEmployeeError('employeePassword', 'Password harus diisi');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                console.log('❌ Validasi gagal');
+                return;
+            }
+
+            console.log('✅ Validasi berhasil, melanjutkan login...');
+
+            // Show loading state
+            const originalText = employeeLoginBtn.innerHTML;
+            employeeLoginBtn.innerHTML = '<div class="loading"></div> Sedang login...';
+            employeeLoginBtn.disabled = true;
+
+            try {
+                console.log('🔐 Mengirim request login...');
+
+                const response = await fetch('https://masterspackaging.my.id/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    // ✅ UBAH: { email, password } → { username, password }
+                    body: JSON.stringify({ username, password })  // INI YANG DIUBAH
+                });
+
+                console.log('📡 Response status:', response.status);
+
+                const result = await response.json();
+                console.log('📦 Response data:', result);
+
+                if (result.success) {
+                    console.log('✅ Login berhasil');
+
+                    // Pastikan user adalah karyawan
+                    if (result.data.user.role !== 'karyawan') {
+                        console.log('❌ User bukan karyawan');
+                        showNotification('Error: Hanya karyawan yang bisa login di sini', 'error');
+                        employeeLoginBtn.innerHTML = originalText;
+                        employeeLoginBtn.disabled = false;
+                        return;
+                    }
+
+                    SessionManager.createSession(result.data.user, result.data.token);
+
+                    showNotification(`Login berhasil! Selamat datang ${result.data.user.name}`, 'success');
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    console.log('❌ Login gagal:', result.message);
+                    showNotification('Login gagal: ' + result.message, 'error');
+                    employeeLoginBtn.innerHTML = originalText;
+                    employeeLoginBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('💥 Login error:', error);
+                showNotification('Error: ' + error.message, 'error');
+                employeeLoginBtn.innerHTML = originalText;
+                employeeLoginBtn.disabled = false;
+            }
+        }
+
+        function showEmployeeError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            const inputElement = document.getElementById(fieldId);
+
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            inputElement.classList.add('error');
+        }
+
+        function clearEmployeeError(event) {
+            const inputElement = event.target;
+            const fieldId = inputElement.id;
+            const errorElement = document.getElementById(fieldId + 'Error');
+
+            errorElement.style.display = 'none';
+            inputElement.classList.remove('error');
+        }
+    </script>
+</body>
+
+</html>

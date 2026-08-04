@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Karyawan - Masterpackaging</title>
+    <link rel="icon" type="image/png" href="images/icon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/api.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* MINDMATE LIGHT THEME */
+        body {
+            font-family: 'sans-serif', 'Manrope', 'Inter', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            /* Background putih */
+            color: #0a1931;
+            /* Text dark */
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* Header - Mindmate Style */
+        .header {
+            background-color: #0a1931;
+            /* ganti dari background-image */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(30, 38, 43, 0.3);
+            min-height: 80px;
+            border-bottom: none;
+        }
+
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: none;
+            font-weight: bold;
+        }
+
+        .company-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .logout-btn {
+            background: none;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .logout-btn-mobile {
+            display: none;
+            background: none;
+            border: none;
+            color: #e2e2e2;
+            font-size: 1.3em;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* User Info - Mindmate Card */
+        .user-section {
+            background: #ffffff;
+            /* Background light */
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 3px 4px 20px rgba(16, 15, 15, 0.1);
+            border: none;
+            /* Border light */
+        }
+
+        .user-section h1 {
+            font-size: 1.4em;
+            margin-bottom: 8px;
+            color: #0a1931;
+            /* Text dark */
+            font-weight: 600;
+        }
+
+        .user-section p {
+            color: #0a1931;
+            /* Text gray */
+            font-size: 0.95em;
+        }
+
+        /* Stats Grid - Mindmate Metrics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            /* Background white */
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(48, 45, 45, 0.1);
+            border: none;
+            /* Border light */
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #0a1931;
+            /* Text gray */
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #0a1931;
+            /* Primary blue */
+            margin: 12px 0;
+        }
+
+        .stat-label {
+            color: #0a1931;
+            /* Text light */
+            font-size: 0.85em;
+        }
+
+        .content-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* Untuk desktop: side by side */
+        @media (min-width: 1024px) {
+            .content-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 25px;
+            }
+        }
+
+        /* Attendance Section - Mindmate Card */
+        .attendance-section {
+            background: #ffffff;
+            /* Background white */
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            /* Border light */
+        }
+
+        .attendance-section h2 {
+            margin-bottom: 25px;
+            color: #0a1931;
+            /* Text dark */
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .attendance-btn {
+            background: linear-gradient(135deg, #0a1931, #2a2948);
+            /* Primary gradient */
+            color: rgb(253, 253, 253);
+            border: none;
+            padding: 18px 35px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 320px;
+            min-height: 55px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .attendance-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px #0a1931;
+        }
+
+        .attendance-btn.clocked-in {
+            background: linear-gradient(135deg, #ff0000, #ff0000);
+            /* Accent green */
+            box-shadow: 0 4px 15px rgba(7, 42, 30, 0.3);
+        }
+
+        .attendance-btn.clocked-in:hover {
+            box-shadow: 0 6px 20px rgba(9, 49, 36, 0.4);
+        }
+
+        .attendance-status {
+            margin-top: 20px;
+            padding: 20px;
+            background: #ffffff;
+            /* Background gray */
+            border-radius: 10px;
+            border: none;
+            /* Border light */
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+        }
+
+        .time-item {
+            text-align: center;
+        }
+
+        .time-label {
+            color: #0a1931;
+            /* Text gray */
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .time-value {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #0a1931;
+            /* Primary blue */
+        }
+
+        /* Chart Section - Mindmate Style */
+        .chart-section {
+            background: #ffffff;
+            /* Background white */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            /* Border light */
+        }
+
+        .chart-section h2 {
+            margin-bottom: 20px;
+            color: #0a1931;
+            /* Text dark */
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+            margin-bottom: 20px;
+        }
+
+        /* Chart Legend */
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85em;
+            padding: 8px 15px;
+            background: none;
+            /* Background light */
+            border-radius: 20px;
+            border: none;
+            color: #0a1931;
+            /* Border light */
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .legend-hadir {
+            background-color: #10b981;
+            /* Accent green */
+        }
+
+        .legend-izin {
+            background-color: #f59e0b;
+            /* Accent orange */
+        }
+
+        .legend-sakit {
+            background-color: #6366f1;
+            /* Primary blue */
+        }
+
+        /* History Section - Mindmate Table */
+        .history-section {
+            background: #ffffff;
+            /* Background white */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: none
+                /* Border light */
+        }
+
+        .history-section h2 {
+            margin-bottom: 20px;
+            color: #1e293b;
+            /* Text dark */
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            /* Border light */
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+            min-width: 600px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            /* Border light */
+        }
+
+        .history-table th {
+            background-color: #f8fafc;
+            /* Background light */
+            color: #1e293b;
+            /* Text dark */
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-table tr:hover {
+            background-color: #ffffff;
+            /* Background light */
+        }
+
+        /* Status Badges */
+        .status-on-time {
+            color: #10b981;
+            /* Accent green */
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .status-late {
+            color: #ef4444;
+            /* Accent red */
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .status-izin {
+            color: #f59e0b;
+            /* Accent orange */
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        /* Modal Camera - Mindmate Style */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #2A2D3E;
+            /* Background white */
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 450px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            /* Border light */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            /* Border light */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            /* Background light */
+            color: #1e293b;
+            /* Text dark */
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #1e293b;
+            /* Text dark */
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+
+        .close {
+            color: #64748b;
+            /* Text gray */
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            min-width: 30px;
+            min-height: 30px;
+            background: none;
+            border: none;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .camera-container {
+            width: 100%;
+            height: 280px;
+            background: #2A2D3E;
+            /* Background gray */
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            border: 1px solid #e2e8f0;
+            /* Border light */
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .captured-photo {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            display: none;
+        }
+
+        .attendance-info {
+            background: #f8fafc;
+            /* Background light */
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            /* Border light */
+        }
+
+        .info-item {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .info-label {
+            color: #1e293b;
+            /* Text dark */
+            font-weight: 600;
+            font-size: 0.9em;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+
+        .info-value {
+            color: #6366f1;
+            /* Primary blue */
+            font-weight: 600;
+            font-size: 0.9em;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .location-distance {
+            color: #10b981;
+            /* Accent green */
+        }
+
+        .camera-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .camera-btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            flex: 1;
+            min-height: 50px;
+            min-width: 130px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-capture {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            /* Primary gradient */
+            color: white;
+        }
+
+        .btn-capture:hover {
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+            transform: translateY(-2px);
+        }
+
+        .btn-retake {
+            background: #64748b;
+            /* Text gray */
+            color: white;
+        }
+
+        .btn-retake:hover {
+            background: #475569;
+            transform: translateY(-2px);
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #10b981, #059669);
+            /* Accent green */
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #cbd5e1;
+            /* Border medium */
+            border-top: 3px solid #6366f1;
+            /* Primary blue */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #64748b;
+            /* Text gray */
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+            /* Border medium */
+        }
+
+        /* Attendance Type Section */
+        .attendance-type-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8fafc;
+            /* Background light */
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            /* Border light */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #1e293b;
+            /* Text dark */
+            font-size: 0.95em;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            /* Border light */
+            border-radius: 8px;
+            font-size: 0.95em;
+            background: #ffffff;
+            /* Background white */
+            color: #1e293b;
+            /* Text dark */
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            /* Border light */
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            min-height: 90px;
+            background: #ffffff;
+            /* Background white */
+            color: #1e293b;
+            /* Text dark */
+        }
+
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: #2A2D3E;
+            /* Primary blue */
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+                min-height: 60px;
+            }
+
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .company-name {
+                font-size: 1.1em;
+            }
+
+            .logout-btn {
+                display: none;
+            }
+
+            .logout-btn-mobile {
+                display: block;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .user-section {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-number {
+                font-size: 1.6em;
+            }
+
+            .attendance-section,
+            .chart-section,
+            .history-section {
+                padding: 20px;
+            }
+
+            .attendance-btn {
+                padding: 16px 25px;
+                font-size: 1em;
+                max-width: none;
+            }
+
+            .time-display {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .chart-container {
+                height: 240px;
+            }
+
+            .history-table {
+                font-size: 0.8em;
+                min-width: 500px;
+            }
+
+            .history-table th,
+            .history-table td {
+                padding: 12px 8px;
+            }
+
+            .modal-content {
+                margin: 2% auto;
+                width: 98%;
+            }
+
+            .camera-container {
+                height: 240px;
+            }
+
+            .camera-buttons {
+                flex-direction: column;
+            }
+
+            .camera-btn {
+                min-width: 100%;
+            }
+
+            .chart-legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .legend-item {
+                width: 100%;
+                max-width: 200px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .company-name {
+                font-size: 1em;
+            }
+
+            .user-section h1 {
+                font-size: 1.2em;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 18px 12px;
+            }
+
+            .stat-number {
+                font-size: 1.4em;
+            }
+
+            .attendance-section h2,
+            .chart-section h2,
+            .history-section h2 {
+                font-size: 1.2em;
+            }
+
+            .modal-header h3 {
+                font-size: 1.1em;
+            }
+
+            .info-label,
+            .info-value {
+                font-size: 0.85em;
+            }
+
+            .camera-btn {
+                font-size: 0.9em;
+                padding: 12px 18px;
+            }
+
+            .history-table {
+                font-size: 0.75em;
+            }
+
+            .history-table th,
+            .history-table td {
+                padding: 10px 6px;
+            }
+        }
+
+        .status-sakit {
+            color: #17a2b8;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <img src="images/logo.png" alt="Masterpackaging Logo" class="logo">
+            <div class="company-name">MASTER PACKAGING</div>
+        </div>
+        <button class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+        <button class="logout-btn-mobile">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </header>
+
+    <div class="container">
+        <!-- User Info -->
+        <section class="user-section">
+            <div style="display: flex; align-items: center; gap: 15px; justify-content: center;">
+                <!-- 🎯 FOTO USER -->
+                <img id="userPhoto" src="" alt="User Photo"
+                    style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #4f9bff; object-fit: cover; display: none;">
+                <div style="text-align: left;">
+                    <h1 id="userName">Karyawan Masterpackaging</h1>
+                    <p id="userPosition"></p>
+                    <!-- 🎯 INFO TAMBAHAN -->
+                    <p id="userEmail" style="color: #a0aec0; font-size: 0.9em; display: none;"></p>
+                    <p id="userRole" style="color: #4f9bff; font-size: 0.8em; font-weight: 600; display: none;"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Kehadiran Bulan Ini</h3>
+                <div class="stat-number" id="attendanceCount">-</div>
+                <div class="stat-label">Hari</div>
+            </div>
+            <div class="stat-card">
+                <h3>Persentase Kehadiran</h3>
+                <div class="stat-number" id="attendanceRate">-</div>
+                <div class="stat-label">Rate</div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Attendance Section -->
+            <section class="attendance-section">
+                <h2>Absensi Harian</h2>
+                <button id="attendanceBtn" class="attendance-btn">
+                    ABSEN MASUK
+                </button>
+
+                <div class="attendance-status">
+                    <p id="attendanceMessage">Silakan lakukan absensi masuk</p>
+                    <div class="time-display">
+                        <div class="time-item">
+                            <div class="time-label">Jam Masuk</div>
+                            <div class="time-value" id="clockInTime">-</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-label">Jam Pulang</div>
+                            <div class="time-value" id="clockOutTime">-</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart Section -->
+            <section class="chart-section">
+                <h2>Statistik Kehadiran</h2>
+                <div class="chart-container">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+                <div class="chart-legend" id="chartLegend">
+                    <!-- Legend akan diisi oleh JavaScript -->
+                </div>
+            </section>
+        </div>
+
+        <!-- History Section -->
+        <section class="history-section">
+            <h2>Riwayat Kehadiran</h2>
+            <div class="table-wrapper">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Masuk</th>
+                            <th>Pulang</th>
+                            <th>Status</th>
+                            <th>Lokasi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceHistory">
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-clipboard-list"></i>
+                                <div>Belum ada riwayat absensi</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Camera Modal -->
+    <div id="cameraModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-camera"></i> Absensi Selfie</h3>
+                <button class="close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="camera-container">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <div id="capturedPhoto" class="captured-photo"></div>
+                </div>
+
+                <div class="attendance-info">
+                    <div class="info-item">
+                        <span class="info-label">Hari & Tanggal:</span>
+                        <span class="info-value" id="modalDate">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Lokasi:</span>
+                        <span class="info-value location-distance" id="modalLocation">Mendeteksi lokasi...</span>
+                    </div>
+                </div>
+
+                <!-- Attendance Type Section -->
+                <div class="attendance-type-section">
+                    <div class="form-group">
+                        <label for="attendanceType">
+                            <i class="fas fa-clipboard-list"></i> Jenis Absensi:
+                        </label>
+                        <select id="attendanceType" class="form-select">
+                            <option value="hadir">Hadir</option>
+                            <option value="izin">Izin</option>
+                            <option value="sakit">Sakit</option>
+                        </select>
+                    </div>
+
+                    <div id="reasonSection" class="form-group" style="display: none;">
+                        <label for="reasonText">
+                            <i class="fas fa-comment-alt"></i> Alasan Izin:
+                        </label>
+                        <textarea id="reasonText" class="form-textarea" placeholder="Jelaskan alasan izin Anda..."
+                            rows="3"></textarea>
+                    </div>
+
+                    <div class="camera-buttons">
+                        <button id="captureBtn" class="camera-btn btn-capture">
+                            <i class="fas fa-camera"></i> Ambil Foto
+                        </button>
+                        <button id="retakeBtn" class="camera-btn btn-retake" style="display: none;">
+                            <i class="fas fa-redo"></i> Ambil Ulang
+                        </button>
+                        <button id="confirmBtn" class="camera-btn btn-confirm" style="display: none;">
+                            <i class="fas fa-check"></i> Konfirmasi Absen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎯 JAVASCRIPT TETAP SAMA PERSIS -->
+    <script>
+        // 🚫 DISABLE CONSOLE IN PRODUCTION
+        if (window.location.hostname !== 'localhost') {
+            console.log = function () { };
+            console.warn = function () { };
+            console.error = function () { };
+            console.debug = function () { };
+        }
+
+        // Data dan state management
+        let userData = {
+            name: "Gauz",
+            position: "programmer abal-abal",
+            isClockedIn: false,
+            lastAttendance: null
+        };
+
+        let attendanceHistory = [];
+        let cameraStream = null;
+        let capturedPhoto = null;
+        let currentLocation = null;
+        let currentLocationName = "Mendeteksi lokasi...";
+
+        let COMPANY_LOCATIONS = [];
+
+        // 🎯 FUNCTION UNTUK LOAD COMPANY LOCATIONS
+        async function loadCompanyLocations() {
+            try {
+                console.log('📍 Loading company locations from API...');
+                const result = await apiService.getCompanyLocations();
+
+                if (result.success && result.data.length > 0) {
+                    COMPANY_LOCATIONS = result.data;
+                    console.log('🔍 DEBUG Company Locations:', COMPANY_LOCATIONS[0]);
+                } else {
+                    COMPANY_LOCATIONS = [{
+                        id: 1,
+                        name: "Master Packaging Mataram",
+                        latitude: -8.6051553,
+                        longitude: 116.0939254,
+                        radius: 500,
+                        address: "Master Packaging Cetak Cup Gelas Premium Mataram"
+                    }];
+                    console.log('⚠️ Using fallback location. RADIUS:', COMPANY_LOCATIONS[0].radius);
+                }
+            } catch (error) {
+                console.error('❌ Error loading locations:', error);
+                COMPANY_LOCATIONS = [{
+                    id: 1,
+                    name: "Master Packaging Mataram",
+                    latitude: -8.6051553,
+                    longitude: 116.0939254,
+                    radius: 500,
+                    address: "Master Packaging Cetak Cup Gelas Premium Mataram"
+                }];
+                console.log('❌ Error fallback. RADIUS:', COMPANY_LOCATIONS[0].radius);
+            }
+        }
+
+        // DOM Elements
+        const userNameElement = document.getElementById('userName');
+        const userPositionElement = document.getElementById('userPosition');
+        const attendanceBtn = document.getElementById('attendanceBtn');
+        const clockInTimeElement = document.getElementById('clockInTime');
+        const clockOutTimeElement = document.getElementById('clockOutTime');
+        const attendanceMessageElement = document.getElementById('attendanceMessage');
+        const attendanceHistoryElement = document.getElementById('attendanceHistory');
+        const cameraModal = document.getElementById('cameraModal');
+        const videoElement = document.getElementById('video');
+        const canvasElement = document.getElementById('canvas');
+        const capturedPhotoElement = document.getElementById('capturedPhoto');
+        const closeModalBtn = document.querySelector('.close');
+        const captureBtn = document.getElementById('captureBtn');
+        const retakeBtn = document.getElementById('retakeBtn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const modalDateElement = document.getElementById('modalDate');
+        const modalLocationElement = document.getElementById('modalLocation');
+        const logoutBtn = document.querySelector('.logout-btn');
+        const logoutBtnMobile = document.querySelector('.logout-btn-mobile');
+        const attendanceCountElement = document.getElementById('attendanceCount');
+        const attendanceRateElement = document.getElementById('attendanceRate');
+        const chartLegend = document.getElementById('chartLegend');
+
+        // Chart instance
+        let attendanceChart = null;
+
+        // 🎯 FUNCTION BARU: Tampilkan user info (AMAN - TIDAK SENTUH EXISTING)
+        function displayUserInfo() {
+            try {
+                const storedUserData = JSON.parse(localStorage.getItem('userData'));
+
+                if (!storedUserData) {
+                    console.log('❌ No user data found in displayUserInfo');
+                    return;
+                }
+
+                console.log('👤 Displaying user info:', {
+                    name: storedUserData.name,
+                    email: storedUserData.email,
+                    role: storedUserData.role,
+                    hasPhoto: !!storedUserData.photo_url
+                });
+
+                // 🎯 UPDATE TAMPILAN - PAKAI EXISTING ELEMENTS
+                const userNameElement = document.getElementById('userName');
+                const userPositionElement = document.getElementById('userPosition');
+                const userPhotoElement = document.getElementById('userPhoto');
+                const userEmailElement = document.getElementById('userEmail');
+                const userRoleElement = document.getElementById('userRole');
+
+                if (userNameElement) {
+                    userNameElement.textContent = storedUserData.name || 'Karyawan Masterpackaging';
+                }
+
+                // 🎯 POSITION: Fallback ke role jika position tidak ada
+                if (userPositionElement) {
+                    userPositionElement.textContent = storedUserData.position ||
+                        storedUserData.role ||
+                        'Karyawan';
+                }
+
+                // 🎯 EMAIL & ROLE (optional display)
+                if (userEmailElement) {
+                    userEmailElement.textContent = storedUserData.email || '';
+                    userEmailElement.style.display = 'block';
+                }
+
+                if (userRoleElement) {
+                    userRoleElement.textContent = `Role: ${storedUserData.role || 'karyawan'}`;
+                    userRoleElement.style.display = 'block';
+                }
+
+                // 🎯 FOTO PROFIL
+                if (userPhotoElement && storedUserData.photo_url) {
+                    userPhotoElement.src = storedUserData.photo_url;
+                    userPhotoElement.style.display = 'block';
+                    console.log('✅ User photo loaded');
+                } else if (userPhotoElement) {
+                    // Fallback avatar based on name
+                    const userName = storedUserData.name || 'User';
+                    userPhotoElement.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=1a2332&color=fff&size=60`;
+                    userPhotoElement.style.display = 'block';
+                    console.log('✅ Using fallback avatar');
+                }
+
+            } catch (error) {
+                console.error('❌ Error in displayUserInfo:', error);
+            }
+        }
+
+        // Initialize aplikasi
+        document.addEventListener('DOMContentLoaded', async function () {
+            setupEventListeners();
+
+            displayUserInfo();
+
+            // 🎯 LOAD COMPANY LOCATIONS DULU SEBELUM LAINNYA!
+            await loadCompanyLocations();
+            console.log('✅ Company locations loaded before everything');
+
+            // Baru load data lainnya
+            await loadUserData();
+            await initializeChart();
+        });
+
+        // 🎯 ATTENDANCE TYPE LOGIC
+        const attendanceTypeSelect = document.getElementById('attendanceType');
+        const reasonSection = document.getElementById('reasonSection');
+        const reasonText = document.getElementById('reasonText');
+
+        // Event listener untuk dropdown
+        attendanceTypeSelect.addEventListener('change', function () {
+            if (this.value === 'izin') {
+                reasonSection.style.display = 'block';
+            } else {
+                reasonSection.style.display = 'none';
+                reasonText.value = ''; // Clear reason
+            }
+        });
+
+        // TAMBAH FUNCTION AUTHENTICATION - TETAP ADA TAPI DI-COMMENT
+        function checkAuthentication() {
+            /* 🚨 PRODUCTION CODE - JANGAN DIHAPUS
+            const userData = localStorage.getItem('userData');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+    
+            const user = JSON.parse(userData);
+            if (user.role === 'admin') {
+                window.location.href = 'admin.html';
+                return;
+            }
+    
+            // Load user data dari API
+            loadUserData();
+            */
+
+            // 🚀 DEVELOPMENT: Langsung load data
+            loadUserData();
+        }
+
+        async function loadUserData() {
+            try {
+                const storedUserData = JSON.parse(localStorage.getItem('userData'));
+                const userId = storedUserData?.id || 2;
+
+                console.log('👤 Loading data for user:', userId);
+
+                // Update user data global jika ada
+                if (storedUserData) {
+                    userData.name = storedUserData.name || userData.name;
+                    userData.position = storedUserData.position || userData.position;
+                    userData.id = storedUserData.id;
+                }
+
+                // 🎯 LOAD HISTORY DULU
+                await loadAttendanceHistory(userId);
+
+                // 🎯 THEN CHECK TODAY'S STATUS
+                const todayResult = await apiService.getTodayAttendance(userId);
+                console.log('📅 Today attendance result:', todayResult);
+
+                if (todayResult.success && todayResult.data) {
+                    const todayData = todayResult.data;
+                    console.log('🔄 Processing today data:', todayData);
+
+                    // 🎯 FIX: Compare dengan ID yang benar & date yang sama
+                    const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+                    const existingIndex = attendanceHistory.findIndex(record => {
+                        // Compare berdasarkan ID record atau date yang sama
+                        return record.id === todayData.id ||
+                            (record.date && record.date.includes(todayDate));
+                    });
+
+                    console.log('🔍 Duplicate check:', {
+                        existingIndex: existingIndex,
+                        todayDataId: todayData.id,
+                        todayDate: todayDate
+                    });
+
+                    if (existingIndex !== -1) {
+                        // 🎯 UPDATE existing record
+                        attendanceHistory[existingIndex] = todayData;
+                        console.log('✅ Updated existing record in history');
+                    } else {
+                        // 🎯 ADD new record to beginning
+                        attendanceHistory.unshift(todayData);
+                        console.log('✅ Added new today record to history');
+                    }
+                }
+
+                // 🎯 UPDATE SEMUA TAMPILAN
+                updateAttendanceStatus();
+                updateStats();
+                updateHistoryTable();
+                await initializeChart();
+
+                console.log('✅ All data loaded successfully. History count:', attendanceHistory.length);
+
+            } catch (error) {
+                console.error('❌ Error loading user data:', error);
+                showNotification('Gagal memuat data', 'error');
+            }
+        }
+
+        async function loadAttendanceHistory(userId) {
+            try {
+                console.log('📅 Loading attendance history for user:', userId);
+
+                const result = await apiService.getAttendanceHistory(userId);
+                console.log('🔍 DEBUG - Raw API history data:', result);
+
+                if (result.success) {
+                    attendanceHistory = (result.data || []).map(record => {
+                        console.log('🔍 DEBUG - Transforming record:', record);
+
+                        return {
+                            id: record.id,
+                            date: record.tanggal || record.date,
+                            checkin_time: record.waktu_masuk || record.checkin_time,
+                            checkout_time: record.waktu_pulang || record.checkout_time,
+                            status: record.status, // 🎯 PASTIKAN INI TERISI
+                            status_detail: record.status_detail, // 🎯 INI JUGA
+                            latitude: record.latitude,
+                            longitude: record.longitude,
+                            photo: record.photo,
+                            reason: record.reason,
+                            name: record.name
+                        };
+                    });
+
+                    console.log('✅ Transformed history:', attendanceHistory);
+                }
+            } catch (error) {
+                console.error('❌ Error loading attendance history:', error);
+            }
+        }
+
+        function initializeApp() {
+            // Load data dari localStorage jika ada
+            const savedData = localStorage.getItem('attendanceData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                userData = data.userData || userData;
+                attendanceHistory = data.attendanceHistory || [];
+            }
+
+            // Update tampilan user
+            userNameElement.textContent = userData.name;
+            userPositionElement.textContent = userData.position;
+
+            // Update status absensi terakhir
+            updateAttendanceStatus();
+            updateStats();
+            updateHistoryTable();
+        }
+
+        function setupEventListeners() {
+            // Tombol absensi
+            attendanceBtn.addEventListener('click', handleAttendance);
+
+            // Modal events
+            closeModalBtn.addEventListener('click', closeCameraModal);
+            window.addEventListener('click', function (event) {
+                if (event.target === cameraModal) {
+                    closeCameraModal();
+                }
+            });
+
+            // Camera events
+            captureBtn.addEventListener('click', capturePhoto);
+            retakeBtn.addEventListener('click', retakePhoto);
+            confirmBtn.addEventListener('click', confirmAttendance);
+
+            // Logout events
+            logoutBtn.addEventListener('click', handleLogout);
+            logoutBtnMobile.addEventListener('click', handleLogout);
+        }
+
+        function handleAttendance() {
+            if (userData.isClockedIn) {
+                // Clock out
+                clockOut();
+            } else {
+                // Clock in - buka modal camera
+                openCameraModal();
+            }
+        }
+
+        async function openCameraModal() {
+            try {
+                console.log('Membuka modal camera...');
+
+                // Update info modal
+                modalDateElement.textContent = formatDateTimeForDisplay(new Date());
+                modalLocationElement.textContent = '📍 Mendeteksi lokasi...';
+                modalLocationElement.className = 'info-value';
+
+                // 🎯 Tampilkan loading state untuk GPS
+                captureBtn.style.display = 'none';
+                retakeBtn.style.display = 'none';
+                confirmBtn.style.display = 'none';
+
+                // Buka modal
+                cameraModal.style.display = 'block';
+
+                // 🎯 Dapatkan lokasi REAL
+                console.log('Memulai deteksi GPS...');
+                await getCurrentLocation();
+
+                // 🎯 Update tampilan dengan smart location
+                updateLocationDisplay();
+
+                // 🎯 Tampilkan tombol capture SETELAH GPS selesai
+                captureBtn.style.display = 'block';
+
+                console.log('GPS selesai, mulai camera...');
+                startCamera();
+
+            } catch (error) {
+                console.error('Error di openCameraModal:', error);
+
+                // 🎯 FALLBACK: Tetap lanjut dengan pesan error yang jelas
+                modalLocationElement.textContent = '📍 Gagal deteksi GPS - Pastikan izin lokasi diaktifkan';
+                modalLocationElement.className = 'info-value';
+
+                // Tetap tampilkan tombol capture meski GPS gagal
+                captureBtn.style.display = 'block';
+                startCamera();
+            }
+        }
+
+        function closeCameraModal() {
+            cameraModal.style.display = 'none';
+            stopCamera();
+        }
+
+        async function startCamera() {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+                videoElement.srcObject = cameraStream;
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                alert('Tidak dapat mengakses kamera. Pastikan Anda memberikan izin akses kamera.');
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+        }
+
+        function capturePhoto() {
+            const context = canvasElement.getContext('2d');
+
+            // RESIZE & COMPRESS MAXIMUM
+            canvasElement.width = 480;    // ↓ dari 1280 (62.5% reduction)
+            canvasElement.height = 360;   // ↓ dari 720 (50% reduction)
+            context.drawImage(videoElement, 0, 0, 480, 360);
+
+            // PAKAI JPG DENGAN QUALITY RENDAH (30%)
+            capturedPhoto = canvasElement.toDataURL('image/jpeg', 0.3);
+
+            capturedPhotoElement.style.backgroundImage = `url(${capturedPhoto})`;
+            capturedPhotoElement.style.display = 'block';
+            videoElement.style.display = 'none';
+
+            // LOG SIZE UNTUK DEBUG
+            const sizeKB = (capturedPhoto.length / 1024).toFixed(2);
+            console.log('Foto compressed:', sizeKB + ' KB');
+            // Expected: 15-40 KB (dari sebelumnya 500KB-2MB)
+
+            // Update tombol
+            captureBtn.style.display = 'none';
+            retakeBtn.style.display = 'block';
+            confirmBtn.style.display = 'block';
+
+            // Stop camera setelah capture
+            stopCamera();
+        }
+
+        function retakePhoto() {
+            capturedPhoto = null;
+            capturedPhotoElement.style.display = 'none';
+            videoElement.style.display = 'block';
+
+            // Update tombol
+            captureBtn.style.display = 'block';
+            retakeBtn.style.display = 'none';
+            confirmBtn.style.display = 'none';
+
+            // Start camera lagi
+            startCamera();
+        }
+
+        async function confirmAttendance() {
+            try {
+                const attendanceType = attendanceTypeSelect.value;
+                const reason = reasonText.value;
+
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                const userId = userData?.id;
+
+                if (!userId) {
+                    showNotification('Error: User data tidak ditemukan', 'error');
+                    return;
+                }
+
+                console.log('🔍 FRONTEND - User ID:', userId);
+
+                // 🎯 FIX: TAMBAH FIELD GPS_ACCURACY YANG DIBUTUHKAN BACKEND
+                const checkinData = {
+                    user_id: userId,
+                    status: attendanceType,
+                    latitude: currentLocation?.lat || null,
+                    longitude: currentLocation?.lng || null,
+                    photo: capturedPhoto,
+                    reason: attendanceType === 'izin' ? reason : null,
+                    gps_accuracy: currentLocation?.accuracy || 100  // 🎯 INI YANG HARUS DITAMBAH!
+                };
+
+                console.log('📤 Data untuk backend:', checkinData);
+
+                // 🎯 TAMPILKAN LOADING
+                confirmBtn.innerHTML = '<div class="loading"></div> Mengirim...';
+                confirmBtn.disabled = true;
+
+                const result = await apiService.checkIn(checkinData);
+
+                console.log('🔍 FRONTEND - Response dari backend:', result);
+
+                if (result.success) {
+                    showNotification(`✅ Absensi ${attendanceType} berhasil!`, 'success');
+                    closeCameraModal();
+
+                    setTimeout(async () => {
+                        console.log('🔄 Force reloading user data...');
+                        await loadUserData();
+                    }, 1000);
+
+                } else {
+                    showNotification('❌ ' + result.message, 'error');
+                }
+
+            } catch (error) {
+                console.error('Error confirm attendance:', error);
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                confirmBtn.innerHTML = '<i class="fas fa-check"></i> Konfirmasi Absen';
+                confirmBtn.disabled = false;
+            }
+        }
+
+        async function clockOut() {
+            try {
+                // 🎯 FIX: PAKAI USER DATA DARI LOCALSTORAGE
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                if (!userData?.id) {
+                    showNotification('Error: User data tidak ditemukan', 'error');
+                    return;
+                }
+
+                console.log('🔐 Clocking out user:', userData.id);
+
+                // PAKAI API SERVICE UNTUK CHECKOUT
+                const result = await apiService.checkOut(userData.id);
+
+                if (result.success) {
+                    // 🎯 FIX: RELOAD SEMUA DATA SETELAH BERHASIL
+                    await loadUserData(); // ⬅️ INI YANG PERLU DITAMBAH!
+
+                    // Tampilkan konfirmasi
+                    showNotification('Absensi pulang berhasil!', 'success');
+
+                    // 🎯 AUTO-REFRESH SETELAH 2 DETIK
+                    setTimeout(() => {
+                        location.reload(); // ⬅️ PASTIKAN UI UPDATE
+                    }, 2000);
+
+                } else {
+                    showNotification('Gagal absen pulang: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error clocking out:', error);
+                showNotification('Error saat absen pulang: ' + error.message, 'error');
+            }
+        }
+
+        function updateAttendanceStatus() {
+            console.log('🔄 updateAttendanceStatus called');
+            console.log('📊 attendanceHistory:', attendanceHistory);
+
+            // WITA Date
+            const now = new Date();
+            const witaOffset = 8 * 60 * 60 * 1000;
+            const witaDate = new Date(now.getTime() + witaOffset);
+            const todayFormatted = witaDate.toISOString().split('T')[0];
+
+            console.log('📅 WITA Date:', todayFormatted);
+
+            // Cari record untuk hari ini
+            let todayRecord = null;
+            if (attendanceHistory && attendanceHistory.length > 0) {
+                todayRecord = attendanceHistory.find(record => {
+                    if (!record.date) return false;
+
+                    let recordDateFormatted = record.date;
+                    if (record.date.includes('T')) {
+                        const recordDate = new Date(record.date);
+                        const recordWITA = new Date(recordDate.getTime() + witaOffset);
+                        recordDateFormatted = recordWITA.toISOString().split('T')[0];
+                    }
+
+                    console.log('🔍 Comparing dates:', recordDateFormatted, 'vs', todayFormatted);
+                    return recordDateFormatted === todayFormatted;
+                });
+            }
+
+            console.log('✅ Today record found:', todayRecord);
+
+            const hasCheckedIn = todayRecord && todayRecord.checkin_time;
+            const hasCheckedOut = todayRecord && todayRecord.checkout_time;
+            const isHadirStatus = todayRecord &&
+                (todayRecord.status === 'hadir' || todayRecord.status === 'terlambat');
+
+            console.log('⏰ Attendance Status Check:', {
+                hasCheckedIn,
+                hasCheckedOut,
+                status: todayRecord?.status,
+                isHadirStatus
+            });
+
+            // 🎯 LOGIC YANG SIMPLE & CLEAN:
+            if (hasCheckedIn && !hasCheckedOut && isHadirStatus) {
+                // 🎯 HANYA HADIR YANG BUTUH ABSEN PULANG
+                let displayCheckin = '-';
+                if (todayRecord.checkin_time) {
+                    const checkinDate = new Date(todayRecord.checkin_time);
+                    const utcHours = checkinDate.getUTCHours();
+                    const utcMinutes = checkinDate.getUTCMinutes();
+                    const witaHours = (utcHours + 8) % 24;
+                    displayCheckin = `${witaHours.toString().padStart(2, '0')}.${utcMinutes.toString().padStart(2, '0')}`;
+                }
+
+                attendanceBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> ABSEN PULANG';
+                attendanceBtn.classList.add('clocked-in');
+                attendanceMessageElement.textContent = 'Anda telah melakukan absensi masuk hari ini';
+                clockInTimeElement.textContent = displayCheckin;
+                clockOutTimeElement.textContent = '-';
+                userData.isClockedIn = true;
+                console.log('✅ Status: HADIR - Butuh absen pulang');
+
+            } else if (hasCheckedIn && !isHadirStatus) {
+                // 🎯 IZIN/SAKIT: TAMPILAN NORMAL, TIDAK PERLU TOMBOL KHUSUS
+                attendanceBtn.innerHTML = '<i class="fas fa-camera"></i> ABSEN MASUK';
+                attendanceBtn.classList.remove('clocked-in');
+                attendanceMessageElement.textContent = `Anda telah melakukan absensi ${todayRecord?.status} hari ini`;
+                clockInTimeElement.textContent = '-';
+                clockOutTimeElement.textContent = '-';
+                userData.isClockedIn = false;
+                console.log('✅ Status: IZIN/SAKIT - Absensi selesai');
+
+            } else {
+                // 🎯 BELUM ABSEN - TAMPILAN DEFAULT
+                attendanceBtn.innerHTML = '<i class="fas fa-camera"></i> ABSEN MASUK';
+                attendanceBtn.classList.remove('clocked-in');
+                attendanceMessageElement.textContent = 'Silakan lakukan absensi masuk';
+                clockInTimeElement.textContent = '-';
+                clockOutTimeElement.textContent = '-';
+                userData.isClockedIn = false;
+                console.log('✅ Status: BELUM ABSEN - Silakan absen');
+            }
+        }
+
+        function updateStats() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            const monthAttendance = attendanceHistory.filter(record => {
+                const recordDate = new Date(record.date.split('/').reverse().join('-'));
+                return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear;
+            });
+
+            const attendanceCount = monthAttendance.length;
+            const attendanceRate = attendanceCount > 0 ? Math.round((attendanceCount / 22) * 100) : 0;
+
+            // 🎯 HANYA UPDATE 2 INI SAJA
+            attendanceCountElement.textContent = attendanceCount;
+            attendanceRateElement.textContent = attendanceRate + '%';
+        }
+
+        function updateHistoryTable() {
+            const tbody = document.getElementById('attendanceHistory');
+
+            if (attendanceHistory.length === 0) {
+                tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <div>Belum ada riwayat absensi</div>
+                </td>
+            </tr>
+        `;
+                return;
+            }
+
+            let html = '';
+            attendanceHistory.forEach(record => {
+                // 🎯 FIX: KIRIM status_detail KE FUNCTION
+                const statusClass = getStatusClass(record.status, record.status_detail);
+                const statusText = getStatusText(record.status, record.status_detail);
+
+                // 🎯 FIX: TRANSFORM DATE KE WITA
+                let displayDate = record.date;
+                if (record.date && record.date.includes('T')) {
+                    const recordDate = new Date(record.date);
+                    const witaOffset = 8 * 60 * 60 * 1000;
+                    const witaDate = new Date(recordDate.getTime() + witaOffset);
+                    displayDate = witaDate.toISOString().split('T')[0];
+                }
+
+                // 🎯 FIX: DECLARE VARIABLES DENGAN LET
+                let displayCheckin = record.checkin_time || '-';
+                let displayCheckout = record.checkout_time || '-';
+
+                if (record.checkin_time && record.checkin_time.includes('T')) {
+                    const checkinDate = new Date(record.checkin_time);
+                    displayCheckin = checkinDate.toLocaleTimeString('id-ID', {
+                        timeZone: 'Asia/Makassar',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    }).replace(':', '.');
+                }
+
+                if (record.checkout_time && record.checkout_time.includes('T')) {
+                    const checkoutDate = new Date(record.checkout_time);
+                    displayCheckout = checkoutDate.toLocaleTimeString('id-ID', {
+                        timeZone: 'Asia/Makassar',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    }).replace(':', '.');
+                }
+
+                // Format location display
+                const locationDisplay = getLocationDisplay(record);
+
+                html += `
+            <tr>
+                <td>${displayDate}</td>
+                <td>${displayCheckin}</td>
+                <td>${displayCheckout}</td>
+                <td class="${statusClass}">${statusText}</td>
+                <td>${locationDisplay}</td>
+            </tr>
+        `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function getStatusClass(status, status_detail) {
+            console.log('🔍 getStatusClass called with:', { status, status_detail });
+
+            // 🎯 Berdasarkan status_detail
+            if (status_detail && status_detail.includes('Terlambat')) {
+                return 'status-late'; // 🔴 MERAH untuk yang terlambat
+            }
+            if (status_detail === 'Tepat Waktu') {
+                return 'status-on-time'; // 🟢 HIJAU untuk tepat waktu
+            }
+
+            // Default untuk status lain
+            const statusMap = {
+                'hadir': 'status-on-time',
+                'izin': 'status-izin',
+                'sakit': 'status-sakit'
+            };
+
+            return statusMap[status] || 'status-on-time';
+        }
+
+        function getStatusText(status, status_detail) {
+            console.log('🔍 DEBUG getStatusText INPUT:', {
+                status: status,
+                status_detail: status_detail
+            });
+
+            // 🎯 JIKA status = 'hadir' DAN ada status_detail
+            if (status === 'hadir' && status_detail) {
+                // Format: "Hadir (Terlambat 5 menit)" atau "Hadir (Tepat Waktu)"
+                const result = `Hadir (${status_detail})`;
+                console.log('✅ FINAL STATUS TEXT:', result);
+                return result;
+            }
+
+            // Untuk status lain tanpa detail
+            const fallbackMap = {
+                'sakit': 'Sakit',
+                'izin': 'Izin',
+                'hadir': 'Hadir'
+            };
+
+            return fallbackMap[status] || status;
+        }
+
+        async function initializeChart() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                if (!userData?.id) {
+                    console.log('❌ No user data for chart');
+                    return;
+                }
+
+                console.log('📊 Loading chart data for user:', userData.id);
+
+                // 🎯 GET REAL DATA FROM API
+                const result = await apiService.getAttendanceStats(userData.id);
+
+                const data = result.success ? result.data : {
+                    hadir: 0, tidak_hadir: 0, izin: 0, sakit: 0
+                };
+
+                console.log('📈 Chart data:', data);
+
+                const ctx = document.getElementById('attendanceChart').getContext('2d');
+
+                // Destroy existing chart if any
+                if (attendanceChart) {
+                    attendanceChart.destroy();
+                }
+
+                attendanceChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Hadir', 'Izin', 'Sakit'], // 🎯 HANYA 3 LABEL
+                        datasets: [{
+                            data: [data.hadir, data.izin, data.sakit], // 🎯 HANYA 3 DATA
+                            backgroundColor: [
+                                '#28a745', // Hijau - Hadir
+                                '#ffc107', // Kuning - Izin
+                                '#17a2b8'  // Biru - Sakit
+                            ],
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                        return `${label}: ${value} hari (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                updateChartLegend(data);
+
+            } catch (error) {
+                console.error('❌ Error loading chart data:', error);
+                // Fallback to empty chart
+                initializeEmptyChart();
+            }
+        }
+
+        function initializeEmptyChart() {
+            try {
+                const ctx = document.getElementById('attendanceChart').getContext('2d');
+
+                // Destroy existing chart if any
+                if (attendanceChart) {
+                    attendanceChart.destroy();
+                }
+
+                attendanceChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Hadir', 'Tidak Hadir', 'Izin', 'Sakit'],
+                        datasets: [{
+                            data: [0, 0, 0, 0],
+                            backgroundColor: [
+                                '#28a745', // Hijau - Hadir
+                                '#dc3545', // Merah - Tidak Hadir  
+                                '#ffc107', // Kuning - Izin
+                                '#17a2b8'  // Biru - Sakit
+                            ],
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.label}: 0 hari (0%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Update legend dengan data kosong
+                updateChartLegend({ hadir: 0, tidak_hadir: 0, izin: 0, sakit: 0 });
+
+            } catch (error) {
+                console.error('Error initializing empty chart:', error);
+            }
+        }
+
+        function updateChartLegend(data) {
+            const total = data.hadir + data.izin + data.sakit;
+
+            const hadirPercentage = total > 0 ? Math.round((data.hadir / total) * 100) : 0;
+            const izinPercentage = total > 0 ? Math.round((data.izin / total) * 100) : 0;
+            const sakitPercentage = total > 0 ? Math.round((data.sakit / total) * 100) : 0;
+
+            chartLegend.innerHTML = `
+        <div class="legend-item">
+            <div class="legend-color legend-hadir"></div>
+            <span>Hadir: ${data.hadir} hari (${hadirPercentage}%)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color legend-izin"></div>
+            <span>Izin: ${data.izin} hari (${izinPercentage}%)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color legend-sakit"></div>
+            <span>Sakit: ${data.sakit} hari (${sakitPercentage}%)</span>
+        </div>
+    `;
+        }
+
+        // 🎯 FUNCTION: Format Jarak yang Smart - TAMBAH INI
+        function formatJarakSmart(distanceMeters) {
+            if (distanceMeters >= 1000) {
+                // Pakai KM untuk jarak jauh
+                const distanceKm = (distanceMeters / 1000).toFixed(1);
+                return `${distanceKm} km`;
+            } else {
+                // Pakai meter untuk jarak dekat
+                return `${Math.round(distanceMeters)} m`;
+            }
+        }
+
+        function updateLocationDisplay() {
+            if (!currentLocation) {
+                modalLocationElement.textContent = '📍 Mendeteksi lokasi...';
+                modalLocationElement.className = 'info-value';
+                return;
+            }
+
+            let locationText = '';
+            let statusClass = '';
+
+            if (currentLocation.isWithinRadius) {
+                // 🎯 DALAM RADIUS: Tampilkan pesan sederhana
+                locationText = '📍 Dalam Area Master Packaging ✅';
+                statusClass = 'location-distance'; // Hijau
+            } else {
+                // 🎯 LUAR RADIUS: Tampilkan nama lokasi + jarak
+                const formattedDistance = formatJarakSmart(currentLocation.distance);
+
+                // Gunakan nama lokasi dari reverse geocoding
+                let displayAddress = currentLocation.address;
+
+                // Jika address terlalu panjang, pendekkan
+                if (displayAddress.length > 35) {
+                    displayAddress = displayAddress.substring(0, 35) + '...';
+                }
+
+                locationText = ` ${displayAddress} (${formattedDistance} dari Masters Packaging)`;
+                statusClass = ''; // Normal
+            }
+
+            modalLocationElement.textContent = locationText;
+            modalLocationElement.className = 'info-value ' + statusClass;
+        }
+
+        // 🎯 FUNCTION: Get Location Display dengan Jarak (TAMBAH INI)
+        function getLocationDisplay(record) {
+            if (!record.latitude || !record.longitude) {
+                return 'Tidak ada GPS';
+            }
+
+            try {
+                const companyLat = -8.6051553;
+                const companyLng = 116.0939254;
+                const distance = calculateDistance(
+                    parseFloat(record.latitude),
+                    parseFloat(record.longitude),
+                    companyLat,
+                    companyLng
+                );
+
+                const isWithinRadius = distance <= 500; // 🎯 UPDATE KE 500 METER
+
+                // 🎯 SMART DISPLAY
+                if (isWithinRadius) {
+                    return 'Dalam Area Masters Packaging';
+                } else {
+                    const formattedDistance = formatJarakSmart(distance);
+                    return ` ${formattedDistance} dari Masters Packaging`;
+                }
+
+            } catch (error) {
+                console.error('Error calculating distance:', error);
+                return 'Lokasi tercatat';
+            }
+        }
+
+        // FUNCTION GET LOCATION NAME (Reverse Geocoding)
+        async function getLocationName(lat, lng) {
+            try {
+                // 🎯 MANUAL CHECK: Jika dalam radius 100m dari kantor, return nama kantor
+                const companyLat = -8.6051553;
+                const companyLng = 116.0939254;
+                const distance = calculateDistance(lat, lng, companyLat, companyLng);
+
+                if (distance <= 100) {
+                    return "Master Packaging Mataram";
+                }
+
+                // 🎯 FALLBACK: Gunakan service alternatif jika OSM gagal
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+                const data = await response.json();
+
+                if (data && data.address) {
+                    const address = data.address;
+                    // Build location name
+                    if (address.road) {
+                        return address.road + (address.suburb ? `, ${address.suburb}` : '');
+                    } else if (address.suburb) {
+                        return address.suburb;
+                    } else if (address.city) {
+                        return address.city;
+                    } else if (address.town) {
+                        return address.town;
+                    } else if (address.village) {
+                        return address.village;
+                    } else if (address.state) {
+                        return address.state;
+                    }
+                }
+                return `Lokasi ${distance.toFixed(0)}m dari Masters Packaging`;
+            } catch (error) {
+                console.error('Error getLocationName:', error);
+                return `Lokasi ${distance.toFixed(0)}m dari Masters Packaging`;
+            }
+        }
+
+        function getCurrentLocation() {
+            return new Promise((resolve, reject) => {
+                console.log('📍 Memulai deteksi GPS HIGH ACCURACY...');
+
+                const options = {
+                    enableHighAccuracy: true,     // 🎯 REQUEST HIGH ACCURACY
+                    timeout: 30000,               // Kasih waktu lebih lama
+                    maximumAge: 0                 // Jangan pakai cached location
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;
+
+                        console.log('🎯 GPS DETAILED INFO:', {
+                            latitude: userLat,
+                            longitude: userLng,
+                            accuracy: accuracy + ' meters',
+                            altitude: position.coords.altitude,
+                            altitudeAccuracy: position.coords.altitudeAccuracy + ' meters',
+                            heading: position.coords.heading,
+                            speed: position.coords.speed
+                        });
+
+                        // 🎯 STRICT ACCURACY VALIDATION
+                        if (accuracy > 50) {
+                            console.warn('⚠️ GPS ACCURACY LOW:', {
+                                currentAccuracy: accuracy + 'm',
+                                requiredAccuracy: '≤ 50m',
+                                recommendation: 'Move to open area and retry'
+                            });
+
+                            // 🎯 TAMPILKAN WARNING KE USER
+                            modalLocationElement.innerHTML =
+                                `📍 GPS Tidak Akurat (${Math.round(accuracy)}m) ⚠️<br>
+             <small style="color: #ffc107;">
+             💡 Tips: Keluar gedung, pastikan sinyal kuat, refresh halaman
+             </small>`;
+                        }
+
+                        // 🎯 HITUNG JARAK DENGAN RADIUS 500m
+                        let closestLocation = null;
+                        let minDistance = Infinity;
+
+                        COMPANY_LOCATIONS.forEach(company => {
+                            const distance = calculateDistance(userLat, userLng, company.latitude, company.longitude);
+
+                            console.log(`📍 Jarak ke ${company.name}: ${Math.round(distance)}m`);
+
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                closestLocation = company;
+                            }
+                        });
+
+                        // 🎯 PAKAI RADIUS 500m UNTUK VALIDASI
+                        const isWithinRadius = minDistance <= 500;
+
+                        console.log('🎯 FINAL LOCATION VALIDATION:', {
+                            distance: Math.round(minDistance) + 'm',
+                            radius: '500m',
+                            isWithinRadius: isWithinRadius,
+                            accuracy: accuracy + 'm',
+                            accuracyStatus: accuracy <= 20 ? '🟢 EXCELLENT' :
+                                accuracy <= 50 ? '🟡 GOOD' :
+                                    accuracy <= 100 ? '🟠 FAIR' : '🔴 POOR'
+                        });
+
+                        // 🏢 DAPATKAN NAMA LOKASI
+                        let locationName = "Mendeteksi lokasi...";
+                        try {
+                            locationName = await getLocationName(userLat, userLng);
+                        } catch (error) {
+                            locationName = `Koordinat: ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+                        }
+
+                        // 💾 SIMPAN DATA
+                        currentLocation = {
+                            lat: userLat,
+                            lng: userLng,
+                            accuracy: accuracy,
+                            source: 'browser_geolocation',
+                            timestamp: new Date().toISOString(),
+                            address: locationName,
+                            distance: minDistance,
+                            isWithinRadius: isWithinRadius,
+                            closestCompany: closestLocation
+                        };
+
+                        resolve(currentLocation);
+                    },
+                    (error) => {
+                        console.error('❌ GPS Error Details:', {
+                            code: error.code,
+                            message: error.message,
+                            tips: [
+                                '1. Pastikan izin lokasi diaktifkan',
+                                '2. Gunakan browser modern (Chrome/Edge)',
+                                '3. Pastikan koneksi internet stabil',
+                                '4. Keluar dari gedung untuk sinyal better'
+                            ]
+                        });
+                        reject(error);
+                    },
+                    options // 🎯 PAKAI OPTIONS HIGH ACCURACY
+                );
+            });
+        }
+
+        // FUNCTION CALCULATE DISTANCE
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371000; // Earth radius in meters
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in meters
+        }
+
+        // ================= TIME FUNCTIONS - WITA =================
+        function toWITA(dateInput = new Date()) {
+            const d = (typeof dateInput === 'string') ? new Date(dateInput) : dateInput;
+
+            // format tanggal: YYYY-MM-DD (zona Asia/Makassar)
+            const dateWITA = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Asia/Makassar'
+            }).format(d);
+
+            // format waktu: HH:mm:ss (zona Asia/Makassar)
+            const timeParts = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Makassar',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).formatToParts(d);
+
+            const hh = timeParts.find(p => p.type === 'hour').value;
+            const mm = timeParts.find(p => p.type === 'minute').value;
+            const ss = timeParts.find(p => p.type === 'second').value;
+            const timeWITA = `${hh}:${mm}:${ss}`;
+
+            // tampil human readable
+            const display = new Intl.DateTimeFormat('id-ID', {
+                timeZone: 'Asia/Makassar',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(d) + ' WITA';
+
+            return { date: dateWITA, time: timeWITA, display };
+        }
+
+        // ================== WITA TIME DISPLAY ==================
+        function formatDateTimeForDisplay(dateInput = new Date()) {
+            try {
+                const options = {
+                    timeZone: 'Asia/Makassar', // ✅ WITA timezone
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+
+                // Format ke waktu lokal Indonesia - WITA
+                const formatter = new Intl.DateTimeFormat('id-ID', options);
+                return formatter.format(dateInput) + ' WITA';
+            } catch (error) {
+                console.error('❌ formatDateTimeForDisplay Error:', error);
+                return dateInput.toLocaleString('id-ID', { timeZone: 'Asia/Makassar' }) + ' WITA';
+            }
+        }
+
+
+        // 🎯 FUNCTION: Handle Logout dengan Custom Confirmation
+        function handleLogout() {
+            Swal.fire({
+                title: 'Yakin ingin logout?',
+                text: "Anda akan keluar dari sistem absensi",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Logout!',
+                cancelButtonText: 'Batal',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'custom-swal'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Tampilkan loading
+                    Swal.fire({
+                        title: 'Logging out...',
+                        text: 'Sedang memproses logout',
+                        icon: 'info',
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    });
+
+                    // Clear data & redirect
+                    localStorage.removeItem('userData');
+                    localStorage.removeItem('authToken');
+
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                }
+            });
+        }
+
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1001;
+                font-weight: 500;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        function updateDisplay() {
+            updateAttendanceStatus();
+        }
+    </script>
+</body>
+
+</html>

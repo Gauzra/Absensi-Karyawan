@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Master Packaging</title>
+    <link rel="icon" type="image/png" href="images/icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="js/api.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333333;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* Header - Simplified */
+        .admin-header {
+            background-color: #0a1931;
+            /* ganti dari background-image */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(30, 38, 43, 0.3);
+            min-height: 80px;
+            border-bottom: none;
+        }
+
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: none;
+            font-weight: bold;
+        }
+
+        .company-name {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: white;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 36px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Stats Grid - Simplified */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+            color: #1a2332;
+        }
+
+        .stat-number {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #1a2332;
+            margin: 5px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.8em;
+        }
+
+        /* Filter Section - Mobile Optimized */
+        .filter-section {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #1a2332;
+            font-size: 0.8em;
+        }
+
+        .filter-select,
+        .filter-input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.85em;
+            min-height: 40px;
+        }
+
+        .filter-btn {
+            background: #1a2332;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            min-height: 40px;
+        }
+
+        /* Table Section */
+        .table-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 1.1em;
+            color: #1a2332;
+            font-weight: 600;
+        }
+
+        .export-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 36px;
+        }
+
+        /* Table Styles - Mobile First */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+            min-width: 500px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            color: #1a2332;
+            font-weight: 600;
+            position: sticky;
+            left: 0;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Status Badges */
+        .status-present {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .status-absent {
+            color: #dc3545;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .status-late {
+            color: #ffc107;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-action {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: 500;
+            min-height: 30px;
+            min-width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-detail {
+            background: #4f9bff;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Custom Notification System */
+        .custom-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 320px;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border-left: 4px solid #4f9bff;
+        }
+
+        .custom-notification.show {
+            transform: translateX(0);
+        }
+
+        .custom-notification.success {
+            border-left-color: #28a745;
+        }
+
+        .custom-notification.error {
+            border-left-color: #dc3545;
+        }
+
+        .custom-notification.warning {
+            border-left-color: #ffc107;
+        }
+
+        .notification-icon {
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .notification-success {
+            color: #28a745;
+        }
+
+        .notification-error {
+            color: #dc3545;
+        }
+
+        .notification-warning {
+            color: #ffc107;
+        }
+
+        .notification-info {
+            color: #4f9bff;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1a2332;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 4px;
+            flex-shrink: 0;
+        }
+
+        /* Custom Modal */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #1a2332;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            min-width: 80px;
+        }
+
+        .btn-confirm {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #c82333;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .admin-header {
+                padding: 10px 12px;
+                min-height: 55px;
+            }
+
+            .logo {
+                width: 35px;
+                height: 35px;
+            }
+
+            .company-name {
+                font-size: 1em;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .nav-btn {
+                padding: 8px;
+                min-width: 36px;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .admin-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px 10px;
+            }
+
+            .stat-number {
+                font-size: 1.2em;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+
+            .table-header {
+                padding: 12px;
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+
+            .export-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .data-table {
+                font-size: 0.75em;
+                min-width: 400px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 6px;
+            }
+
+            .custom-notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .company-name {
+                font-size: 0.9em;
+            }
+
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 12px 8px;
+            }
+
+            .data-table {
+                font-size: 0.7em;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px 4px;
+            }
+
+            .btn-action {
+                padding: 4px 8px;
+                font-size: 0.7em;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-sakit {
+            color: #17a2b8;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .status-izin {
+            color: #ffc107;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        /* Export Modal Styles */
+        .export-preview-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 4px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .export-preview-label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .export-preview-value {
+            font-weight: 600;
+            color: #1a2332;
+        }
+
+        .export-loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .export-loading .loading {
+            margin: 0 auto 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Simplified Header -->
+    <header class="admin-header">
+        <div class="logo-section">
+            <img src="images/logo.png" alt="Masterpackaging Logo" class="logo">
+            <div class="company-name">MASTER PACKAGING</div>
+        </div>
+        <div class="admin-nav">
+            <button class="nav-btn" id="refreshBtn" title="Refresh Data">
+                <i class="fas fa-sync-alt"></i>
+                <span>Refresh</span>
+            </button>
+            <button class="nav-btn" id="logoutBtn" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Simple Stats -->
+        <div class="admin-stats">
+            <div class="stat-card">
+                <i class="fas fa-users stat-icon"></i>
+                <div class="stat-number" id="totalPresent">0</div>
+                <div class="stat-label">Hadir Hari Ini</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-slash stat-icon"></i>
+                <div class="stat-number" id="totalAbsent">0</div>
+                <div class="stat-label">Tidak Hadir</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock stat-icon"></i>
+                <div class="stat-number" id="totalLate">0</div>
+                <div class="stat-label">Terlambat</div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Tanggal</label>
+                    <input type="date" class="filter-input" id="filterDate">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-select" id="filterStatus">
+                        <option value="">Semua Status</option>
+                        <option value="hadir">Hadir</option>
+                        <option value="izin">Izin</option>
+                        <option value="sakit">Sakit</option>
+                    </select>
+                </div>
+                <button class="filter-btn" id="applyFilter">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+            </div>
+        </section>
+
+        <!-- Attendance Table -->
+        <section class="table-section">
+            <div class="table-header">
+                <h2><i class="fas fa-list"></i> Daftar Hadir Karyawan</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="export-btn" id="exportBtn">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                    <button class="export-btn" id="deleteAllBtn" style="background: #dc3545;">
+                        <i class="fas fa-trash"></i> Hapus Semua
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nama Karyawan</th>
+                            <th>Tanggal</th>
+                            <th>Jam Masuk</th>
+                            <th>Jam Pulang</th>
+                            <th>Status</th>
+                            <th>Lokasi</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceData">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Custom Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <!-- Custom Modal untuk konfirmasi -->
+    <div id="customModal" class="custom-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Konfirmasi</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Apakah Anda yakin?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-cancel" id="modalCancel">Batal</button>
+                <button class="modal-btn btn-confirm" id="modalConfirm">Ya</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Foto -->
+    <div id="photoModal" class="custom-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-camera"></i> Foto Selfie Absensi</h3>
+                <button class="modal-close" onclick="closePhotoModal()">&times;</button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="photoInfo" class="mb-3">
+                    <small class="text-muted" id="photoDetails">Loading...</small>
+                </div>
+                <div id="photoContainer">
+                    <img id="photoImage" src="" class="img-fluid rounded"
+                        style="max-height: 400px; border: 2px solid #dee2e6;" alt="Foto Selfie Absensi">
+                </div>
+                <div id="photoLoading" class="text-center py-4">
+                    <div class="loading"></div>
+                    <p class="mt-2">Memuat foto...</p>
+                </div>
+                <div id="photoError" class="alert alert-danger" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage">Gagal memuat foto</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-cancel" onclick="closePhotoModal()">
+                    <i class="fas fa-times"></i> Tutup
+                </button>
+                <a id="downloadPhoto" href="#" class="modal-btn"
+                    style="background: #28a745; color: white; text-decoration: none;">
+                    <i class="fas fa-download"></i> Download
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Export Excel -->
+    <div id="exportModal" class="custom-modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-excel"></i> Export Data ke Excel</h3>
+                <button class="modal-close" onclick="closeExportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-group" style="margin-bottom: 15px;">
+                    <label class="filter-label">Tanggal Mulai</label>
+                    <input type="date" class="filter-input" id="exportStartDate">
+                </div>
+                <div class="filter-group" style="margin-bottom: 15px;">
+                    <label class="filter-label">Tanggal Akhir</label>
+                    <input type="date" class="filter-input" id="exportEndDate">
+                </div>
+                <div class="filter-group" style="margin-bottom: 15px;">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-select" id="exportStatus">
+                        <option value="">Semua Status</option>
+                        <option value="hadir">Hadir</option>
+                        <option value="izin">Izin</option>
+                        <option value="sakit">Sakit</option>
+                    </select>
+                </div>
+                <div id="exportPreview"
+                    style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 15px; display: none;">
+                    <h4 style="margin-bottom: 8px; color: #1a2332; font-size: 0.9em;">
+                        <i class="fas fa-info-circle"></i> Preview Export
+                    </h4>
+                    <div id="previewContent" style="font-size: 0.8em; color: #666;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-cancel" onclick="closeExportModal()">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button class="modal-btn" onclick="processExport()" style="background: #28a745; color: white;"
+                    id="exportConfirmBtn">
+                    <i class="fas fa-download"></i> Export Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 🚫 DISABLE CONSOLE IN PRODUCTION
+        if (window.location.hostname !== 'localhost') {
+            console.log = function () { };
+            console.warn = function () { };
+            console.error = function () { };
+            console.debug = function () { };
+        }
+        
+        // Global State - SEDIKIT MODIFIKASI
+        let currentFilters = {
+            date: '',
+            status: ''
+        };
+
+        // DOM Elements - SAMA
+        const attendanceDataElement = document.getElementById('attendanceData');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const applyFilter = document.getElementById('applyFilter');
+        const filterDate = document.getElementById('filterDate');
+        const filterStatus = document.getElementById('filterStatus');
+
+        // Initialize - MODIFIKASI SEDIKIT
+        document.addEventListener('DOMContentLoaded', function () {
+            checkAuthentication();
+            setupEventListeners();
+            loadDashboardData();
+            loadAttendanceData();
+        });
+
+        function checkAuthentication() {
+            // 🎯 PAKAI SESSION MANAGER YANG BARU
+            if (!SessionManager.validateSession()) {
+                showNotification('Sesi tidak valid, silakan login kembali', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return false;
+            }
+
+            const user = SessionManager.getUser();
+
+            // 🎯 FIX: HANYA ADMIN YANG BISA AKSES - LAINNYA KE LOGIN
+            if (user.role !== 'admin') {
+                console.log('❌ Role bukan admin:', user.role);
+                showNotification('Akses ditolak. Halaman untuk admin saja.', 'error');
+                setTimeout(() => {
+                    SessionManager.clearSession(); // 🎯 CLEAR SESSION
+                    window.location.href = 'login.html'; // 🎯 HANYA KE LOGIN!
+                }, 2000);
+                return false;
+            }
+
+            console.log('✅ Auth valid, role admin, lanjutkan...');
+            showNotification(`Selamat datang, Admin ${user.name}`, 'success', 2000);
+            return true;
+        }
+
+        function setupEventListeners() {
+            refreshBtn.addEventListener('click', loadDashboardData);
+            logoutBtn.addEventListener('click', handleLogout);
+            exportBtn.addEventListener('click', openExportModal);
+            applyFilter.addEventListener('click', applyFilters);
+            document.getElementById('deleteAllBtn').addEventListener('click', confirmDeleteAll);
+
+
+            // filterDate.value = '';
+            // currentFilters.date = '';
+
+            console.log('🎯 Admin panel ready, filter preserved');
+        }
+        // ==================== API FUNCTIONS - YANG BERUBAH ====================
+
+        async function loadDashboardData() {
+            try {
+                console.log('🔄 MANUAL REFRESH - Force reload semua data');
+
+                // 🎯 CLEAR EXISTING DATA DULU
+                attendanceDataElement.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
+                document.getElementById('totalPresent').textContent = '...';
+                document.getElementById('totalAbsent').textContent = '...';
+                document.getElementById('totalLate').textContent = '...';
+
+                // 🎯 FORCE RELOAD KEDUA DATA
+                await Promise.all([
+                    loadStatsData(),
+                    loadAttendanceData()
+                ]);
+
+                showNotification('Data berhasil di-refresh', 'success');
+
+            } catch (error) {
+                console.error('Refresh error:', error);
+                showNotification('Error refresh data', 'error');
+            }
+        }
+
+        async function loadStatsData() {
+            try {
+                // 🎯 ADD TIMESTAMP UNTUK FORCE NO-CACHE
+                const result = await apiService.getDashboardStats();
+                if (result.success) {
+                    updateDashboardStats(result.data);
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadAttendanceData() {
+            try {
+                console.log('🔍 Loading attendance dengan filters:', currentFilters);
+                console.log('📅 Filter Date:', currentFilters.date);
+                console.log('📋 Filter Status:', currentFilters.status);
+
+                const result = await apiService.getAllAttendance(currentFilters);
+                console.log('📡 Full API Response:', result);
+                console.log('🔢 Jumlah records setelah filter:', result.data.length);
+
+                // 🎯 🎯 🎯 DEBUG DI SINI 🎯 🎯 🎯
+                console.log('🔍 DEBUG RECORD DETAIL - First record:', {
+                    id: result.data[0].id,
+                    status: result.data[0].status,
+                    status_detail: result.data[0].status_detail,  // 🎯 CEK INI
+                    telat_menit: result.data[0].telat_menit,      // 🎯 CEK INI
+                    name: result.data[0].name
+                });
+
+                // 🎯 CEK RECORD YANG STATUS = 'terlambat'
+                const terlambatRecord = result.data.find(record => record.status === 'terlambat');
+                if (terlambatRecord) {
+                    console.log('⏰ DEBUG TERLAMBAT RECORD:', {
+                        id: terlambatRecord.id,
+                        status: terlambatRecord.status,
+                        status_detail: terlambatRecord.status_detail,  // 🎯 CEK INI
+                        telat_menit: terlambatRecord.telat_menit,      // 🎯 CEK INI
+                        name: terlambatRecord.name
+                    });
+                } else {
+                    console.log('❌ Tidak ada record dengan status = "terlambat"');
+                }
+                // 🎯 🎯 🎯 END DEBUG 🎯 🎯 🎯
+
+                if (result.success) {
+                    renderAttendanceTable(result.data);
+
+                    // 🎯 DEBUG: Tampilkan sample data filtered
+                    if (result.data.length > 0) {
+                        console.log('📝 Sample filtered data:', {
+                            date: result.data[0].date,
+                            status: result.data[0].status,
+                            name: result.data[0].name
+                        });
+                    }
+                }
+
+            } catch (error) {
+                console.error('💥 Filter Error:', error);
+            }
+        }
+
+        // async function exportData() {
+        //     try {
+        //         showNotification('Menyiapkan file Excel...', 'info');
+
+        //         // Get current date untuk default range
+        //         const today = new Date().toISOString().split('T')[0];
+
+        //         // Minta input tanggal dari user
+        //         const startDate = prompt('Masukkan tanggal mulai (YYYY-MM-DD):', today);
+        //         if (!startDate) return; // User cancel
+
+        //         const endDate = prompt('Masukkan tanggal akhir (YYYY-MM-DD):', today);
+        //         if (!endDate) return; // User cancel
+
+        //         // Validasi tanggal
+        //         if (new Date(startDate) > new Date(endDate)) {
+        //             showNotification('Tanggal mulai tidak boleh lebih besar dari tanggal akhir', 'error');
+        //             return;
+        //         }
+
+        //         // Show loading
+        //         const loadingNotif = showNotification('Membuat file Excel, harap tunggu...', 'info', 0);
+
+        //         // Prepare filters
+        //         const filters = {
+        //             start_date: startDate,
+        //             end_date: endDate,
+        //             status: currentFilters.status || ''
+        //         };
+
+        //         console.log('📊 Exporting Excel with filters:', filters);
+
+        //         // Get Excel file
+        //         const blob = await apiService.exportAttendanceExcel(filters);
+
+        //         // Create download link
+        //         const url = window.URL.createObjectURL(blob);
+        //         const link = document.createElement('a');
+        //         link.href = url;
+
+        //         // Set filename dengan timestamp
+        //         const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+        //         const fileName = `absensi_${startDate}_${endDate}_${timestamp}.xlsx`;
+        //         link.download = fileName;
+
+        //         // Trigger download
+        //         document.body.appendChild(link);
+        //         link.click();
+        //         document.body.removeChild(link);
+        //         window.URL.revokeObjectURL(url);
+
+        //         // Close loading notification
+        //         if (loadingNotif) {
+        //             loadingNotif.classList.remove('show');
+        //             setTimeout(() => {
+        //                 if (loadingNotif.parentNode) {
+        //                     loadingNotif.parentNode.removeChild(loadingNotif);
+        //                 }
+        //             }, 300);
+        //         }
+
+        //         showNotification(`File Excel berhasil diunduh: ${fileName}`, 'success');
+
+        //     } catch (error) {
+        //         console.error('❌ Error exporting Excel:', error);
+        //         showNotification('Error: ' + error.message, 'error');
+        //     }
+        // }
+
+        // ==================== UI UPDATE FUNCTIONS ====================
+
+        // 🎯 FUNCTION: Hitung total terlambat dari data attendance
+        function hitungTotalTerlambat(attendanceData) {
+            if (!attendanceData || !attendanceData.length) return 0;
+
+            let totalTerlambat = 0;
+            attendanceData.forEach(record => {
+                // Cek jika status_detail mengandung "Terlambat"
+                if (record.status_detail && record.status_detail.includes('Terlambat')) {
+                    totalTerlambat++;
+                }
+            });
+
+            console.log('📈 Total Terlambat dari data:', totalTerlambat);
+            return totalTerlambat;
+        }
+
+        function updateDashboardStats(data) {
+            console.log('📊 DEBUG Full Stats Data:', data);
+
+            const hariIni = data.hari_ini || {};
+
+            // 🎯 FIX: Hitung REAL dari data yang ada
+            const totalHadir = parseInt(hariIni.hadir) || 0;
+            const totalIzin = parseInt(hariIni.izin) || 0;
+            const totalSakit = parseInt(hariIni.sakit) || 0;
+
+            // 🎯 "Tidak Hadir" = IZIN + SAKIT (bukan total karyawan minus hadir)
+            const totalTidakHadir = totalIzin + totalSakit;
+
+            // Untuk terlambat, tetap 0 (nanti dihitung dari attendance data)
+            const totalTerlambat = 0;
+
+            document.getElementById('totalPresent').textContent = totalHadir;
+            document.getElementById('totalAbsent').textContent = totalTidakHadir;
+            document.getElementById('totalLate').textContent = totalTerlambat;
+
+            console.log('✅ Stats Updated REAL:', {
+                hadir: totalHadir,
+                izin: totalIzin,
+                sakit: totalSakit,
+                tidak_hadir: totalTidakHadir,
+                terlambat: totalTerlambat
+            });
+
+            // 🚀 FIX: Cek berdasarkan data yang benar
+            if (totalHadir === 0 && totalTidakHadir === 0) {
+                showNotification('Tidak ada absensi hari ini', 'info');
+            }
+        }
+
+        function renderAttendanceTable(attendanceData) {
+            if (!attendanceData || attendanceData.length === 0) {
+                attendanceDataElement.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <div>Tidak ada data absensi</div>
+                </td>
+            </tr>
+        `;
+                return;
+            }
+
+            console.log('🔍 DEBUG - First record structure:', attendanceData[0]);
+            console.log('🔍 DEBUG - Available fields:', Object.keys(attendanceData[0]));
+
+            let html = '';
+            attendanceData.forEach(record => {
+                // 🎯 FIX: Kirim telat_menit ke function
+                const statusClass = getStatusClass(record.status, record.status_detail);
+                const statusText = getStatusText(record.status, record.status_detail, record.telat_menit);  // 🎯 TAMBAH PARAMETER INI
+
+                // 🎯 FIX: Ambil data dari field yang benar
+                const tanggal = record.tanggal_format || record.tanggal || '-';
+
+                let jamMasuk = record.jam_masuk_format || record.jam_masuk || '-';
+                let jamPulang = record.jam_pulang_format || record.jam_pulang || '-';
+
+                // Konversi ke WITA jika ada data UTC
+                if (record.checkin_time && record.checkin_time.includes('T')) {
+                    const checkinDate = new Date(record.checkin_time);
+                    jamMasuk = checkinDate.toLocaleTimeString('id-ID', {
+                        timeZone: 'Asia/Makassar',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+                }
+
+                if (record.checkout_time && record.checkout_time.includes('T')) {
+                    const checkoutDate = new Date(record.checkout_time);
+                    jamPulang = checkoutDate.toLocaleTimeString('id-ID', {
+                        timeZone: 'Asia/Makassar',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+                }
+
+                const lokasi = record.info_lokasi || record.lokasi || 'Tidak ada GPS';
+                const nama = record.name || '-';
+                const email = record.email || '-';
+
+                html += `
+            <tr>
+                <td>
+                    <div style="font-weight: 600;">${nama}</div>
+                    <div style="font-size: 0.7em; color: #666;">${email}</div>
+                </td>
+                <td>${tanggal}</td>
+                <td>${jamMasuk}</td>
+                <td>${jamPulang}</td>
+                <td class="${statusClass}">${statusText}</td>
+                <td>${renderLocation(record.latitude, record.longitude, lokasi)}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-action btn-detail" onclick="showDetail(${record.id})" title="Lihat Detail">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-action" onclick="showPhoto(${record.id})" 
+                                style="background: #17a2b8; color: white;" 
+                                ${!record.photo ? 'disabled' : ''} 
+                                title="Lihat Foto">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <button class="btn-action" onclick="openInMaps(${record.latitude}, ${record.longitude})" 
+                                style="background: #28a745; color: white;" 
+                                ${!record.latitude ? 'disabled' : ''} 
+                                title="Buka di Maps">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+            });
+
+            attendanceDataElement.innerHTML = html;
+        }
+
+        function getTimeDisplay(record) {
+            // 🎯 DEBUG: Lihat field apa yang ada
+            console.log('🔍 DEBUG getTimeDisplay - Record fields:', Object.keys(record));
+            console.log('⏰ checkin_time:', record.checkin_time);
+            console.log('🕐 jam_masuk:', record.jam_masuk);
+            console.log('📊 checkin_time_format:', record.checkin_time_format);
+
+            // Coba berbagai kemungkinan field
+            if (record.jam_masuk && record.jam_masuk !== '-') {
+                console.log('✅ Using jam_masuk:', record.jam_masuk);
+                return record.jam_masuk + ' WITA';
+            }
+            if (record.checkin_time) {
+                console.log('✅ Using checkin_time:', record.checkin_time);
+                return formatTimeWITA(record.checkin_time);
+            }
+            if (record.checkin_time_format) {
+                console.log('✅ Using checkin_time_format:', record.checkin_time_format);
+                return record.checkin_time_format + ' WITA';
+            }
+
+            console.log('❌ No time field found');
+            return '-';
+        }
+
+        function getCheckoutDisplay(record) {
+            // Coba berbagai kemungkinan field
+            if (record.jam_pulang && record.jam_pulang !== '-') {
+                return record.jam_pulang + ' WITA';
+            }
+            if (record.checkout_time) {
+                return formatTimeWITA(record.checkout_time);
+            }
+            if (record.checkout_time_format) {
+                return record.checkout_time_format + ' WITA';
+            }
+            return '-';
+        }
+
+        // 🎯 FUNCTION FORMAT WITA YANG ROBUST
+        function formatTimeWITA(timeValue) {
+            if (!timeValue) return '-';
+
+            try {
+                console.log('⏰ Formatting time:', timeValue);
+
+                // Handle berbagai format
+                let date;
+
+                if (typeof timeValue === 'string') {
+                    if (timeValue.includes('T')) {
+                        // Format ISO
+                        date = new Date(timeValue);
+                    } else if (timeValue.includes(':')) {
+                        // Format sudah jam, langsung return
+                        return timeValue.split('.')[0] + ' WITA';
+                    } else {
+                        return '-';
+                    }
+                } else {
+                    return '-';
+                }
+
+                if (isNaN(date.getTime())) {
+                    console.warn('Invalid date:', timeValue);
+                    return '-';
+                }
+
+                // Convert to WITA
+                const witaOffset = 8 * 60 * 60 * 1000;
+                const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+                const witaTime = new Date(utc + witaOffset);
+
+                return witaTime.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                }) + ' WITA';
+
+            } catch (error) {
+                console.error('Error formatting time WITA:', timeValue, error);
+                return '-';
+            }
+        }
+
+        function getStatusClass(status, status_detail) {
+            console.log('🔍 getStatusClass called with:', { status, status_detail });
+
+            // 🎯 SAMA PERSIS DENGAN DASHBOARD: Check status_detail untuk tentukan warna
+            if (status_detail && status_detail.includes('Terlambat')) {
+                return 'status-late';
+            }
+            if (status_detail === 'Tepat Waktu') {
+                return 'status-on-time';
+            }
+
+            // 🎯 SAMA PERSIS DENGAN DASHBOARD: Fallback
+            const statusMap = {
+                'hadir': 'status-on-time',
+                'terlambat': 'status-late',
+                'izin': 'status-izin',
+                'sakit': 'status-sakit'
+            };
+            return statusMap[status] || 'status-on-time';
+        }
+
+        function getStatusText(status, status_detail) {
+            console.log('🔍 getStatusText input:', { status, status_detail });
+
+            // 🎯 FIX: Gabungkan status + detail seperti dashboard
+            if (status === 'hadir' && status_detail) {
+                if (status_detail.includes('Terlambat')) {
+                    return `Hadir (${status_detail})`; // 🎯 "Hadir (Terlambat 285 menit)"
+                } else if (status_detail === 'Tepat Waktu') {
+                    return 'Hadir (Tepat Waktu)'; // 🎯 "Hadir (Tepat Waktu)"
+                }
+                return `Hadir (${status_detail})`; // Fallback
+            }
+
+            // Fallback untuk status lain
+            const statusMap = {
+                'sakit': 'Sakit',
+                'izin': 'Izin',
+                'hadir': 'Hadir'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function formatTime(timeString) {
+            if (!timeString) return '-';
+            const time = new Date(`2000-01-01T${timeString}`);
+            return time.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // ==================== FILTER FUNCTIONS ====================
+
+        function applyFilters() {
+            console.log('🎯 APPLY FILTERS CLICKED!');
+
+            // 🎯 AMBIL VALUE DARI INPUT
+            currentFilters.date = filterDate.value;
+            currentFilters.status = filterStatus.value;
+
+            console.log('🔍 Current Filters:', currentFilters);
+            console.log('📅 Date input value:', filterDate.value);
+            console.log('📋 Status select value:', filterStatus.value);
+
+            // 🎯 VALIDASI: Jika date kosong, set ke empty string
+            if (!currentFilters.date) {
+                currentFilters.date = '';
+                console.log('🔄 Date filter cleared');
+            }
+
+            loadAttendanceData();
+            showNotification('Filter diterapkan', 'success');
+        }
+
+        // ==================== ACTION FUNCTIONS ====================
+
+        async function handleLogout() {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                localStorage.removeItem('userData');
+                localStorage.removeItem('authToken');
+                showNotification('Logout berhasil', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+            }
+        }
+
+        // ==================== CONFIRM MODAL FUNCTION ====================
+
+        function showConfirmModal(title, message) {
+            return new Promise((resolve) => {
+                // Set modal content
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalMessage').innerHTML = message;
+
+                // Show modal
+                const modal = document.getElementById('customModal');
+                modal.classList.add('show');
+
+                // Setup event listeners
+                const confirmBtn = document.getElementById('modalConfirm');
+                const cancelBtn = document.getElementById('modalCancel');
+                const closeBtn = document.getElementById('modalClose');
+
+                // Update confirm button style untuk danger action
+                confirmBtn.style.background = '#dc3545';
+                confirmBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Hapus';
+
+                function cleanup() {
+                    confirmBtn.removeEventListener('click', onConfirm);
+                    cancelBtn.removeEventListener('click', onCancel);
+                    closeBtn.removeEventListener('click', onCancel);
+                    modal.classList.remove('show');
+                    // Reset button style
+                    confirmBtn.style.background = '';
+                    confirmBtn.innerHTML = 'Ya';
+                }
+
+                function onConfirm() {
+                    cleanup();
+                    resolve(true);
+                }
+
+                function onCancel() {
+                    cleanup();
+                    resolve(false);
+                }
+
+                confirmBtn.addEventListener('click', onConfirm);
+                cancelBtn.addEventListener('click', onCancel);
+                closeBtn.addEventListener('click', onCancel);
+            });
+        }
+
+        // ==================== DELETE ALL FUNCTION ====================
+        async function confirmDeleteAll() {
+            try {
+                // Konfirmasi sebelum hapus
+                const confirmed = await showConfirmModal(
+                    'Hapus Semua Data Absensi',
+                    '⚠️ PERINGATAN: Apakah Anda yakin ingin menghapus SEMUA data absensi?<br><br>' +
+                    '• Tindakan ini tidak dapat dibatalkan<br>' +
+                    '• Semua data absensi akan dihapus permanen<br>' +
+                    '• Pastikan Anda sudah melakukan backup data'
+                );
+
+                if (!confirmed) {
+                    console.log('❌ Hapus semua dibatalkan oleh user');
+                    return;
+                }
+
+                showNotification('Menghapus semua data absensi...', 'warning');
+
+                // 🎯 PAKAI API SERVICE untuk hapus semua data
+                const result = await apiService.deleteAllAttendance();
+
+                if (result.success) {
+                    showNotification('✅ Semua data absensi berhasil dihapus', 'success');
+
+                    // Refresh data setelah hapus
+                    setTimeout(() => {
+                        loadDashboardData();
+                        loadAttendanceData();
+                    }, 1500);
+                } else {
+                    throw new Error(result.message || 'Gagal menghapus data');
+                }
+
+            } catch (error) {
+                console.error('❌ Error deleting all data:', error);
+                showNotification('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function showDetail(recordId) {
+            try {
+                const result = await apiService.getAllAttendance();
+
+                if (result.success) {
+                    const record = result.data.find(r => r.id === recordId);
+                    if (record) {
+                        console.log('🔍 Detail Record Fields:', Object.keys(record));
+                        console.log('🔍 Time Fields:', {
+                            checkin_time: record.checkin_time,
+                            checkout_time: record.checkout_time,
+                            jam_masuk: record.jam_masuk,
+                            jam_pulang: record.jam_pulang
+                        });
+
+                        const detailMessage = `
+Nama: ${record.name}
+Email: ${record.email}
+Tanggal: ${record.tanggal || formatDate(record.date)}
+Jam Masuk: ${record.jam_masuk || formatTime(record.checkin_time)}
+Jam Pulang: ${record.jam_pulang || formatTime(record.checkout_time)}
+Status: ${getStatusText(record.status)}
+Lokasi: ${record.latitude && record.longitude ? `${record.latitude}, ${record.longitude}` : 'Tidak ada'}
+Keterangan: ${record.reason || 'Tidak ada'}
+                `.trim();
+
+                        showNotification(
+                            'Detail Absensi',
+                            detailMessage.replace(/\n/g, '<br>'),
+                            'info',
+                            5000
+                        );
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading detail:', error);
+                showNotification('Error memuat detail: ' + error.message, 'error');
+            }
+        }
+
+        // 🎯 🎯 🎯 TAMBAH FUNCTIONS FOTO DI SINI 🎯 🎯 🎯
+        async function showPhoto(recordId) {
+            try {
+                console.log('Loading photo for:', recordId);
+
+                // Show loading state
+                document.getElementById('photoLoading').style.display = 'block';
+                document.getElementById('photoImage').style.display = 'none';
+                document.getElementById('photoError').style.display = 'none';
+
+                // Get photo data from API
+                const response = await apiService.getAttendancePhoto(recordId);
+
+                if (response.success && response.data.photo) {
+                    // Set photo details
+                    document.getElementById('photoDetails').textContent =
+                        `Absensi ${response.data.status} - ${formatDate(response.data.date)}`;
+
+                    // Set image source
+                    const photoImg = document.getElementById('photoImage');
+                    photoImg.src = response.data.photo;
+
+                    // When image loads, show it
+                    photoImg.onload = function () {
+                        document.getElementById('photoLoading').style.display = 'none';
+                        photoImg.style.display = 'block';
+                    };
+
+                    // Set download link
+                    document.getElementById('downloadPhoto').href = response.data.photo;
+
+                    // Show modal
+                    document.getElementById('photoModal').classList.add('show');
+                } else {
+                    throw new Error(response.message || 'Foto tidak tersedia');
+                }
+            } catch (error) {
+                console.error('Error loading photo:', error);
+                document.getElementById('photoLoading').style.display = 'none';
+                document.getElementById('photoError').style.display = 'block';
+                document.getElementById('errorMessage').textContent = error.message;
+
+                // Still show modal but with error
+                document.getElementById('photoModal').classList.add('show');
+            }
+        }
+
+        function closePhotoModal() {
+            document.getElementById('photoModal').classList.remove('show');
+        }
+
+        // ==================== EXPORT MODAL FUNCTIONS ====================
+        // 📊 OPEN EXPORT MODAL - WITH EVENT REGISTRATION
+        function openExportModal() {
+            console.log('🎯 Opening export modal...');
+
+            // Set default values - 1st of month to today
+            const today = new Date();
+            const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+            const todayFormatted = today.toISOString().split('T')[0];
+            const firstOfMonthFormatted = firstOfMonth.toISOString().split('T')[0];
+
+            console.log('📅 Default dates:', { firstOfMonthFormatted, todayFormatted });
+
+            document.getElementById('exportStartDate').value = firstOfMonthFormatted;
+            document.getElementById('exportEndDate').value = todayFormatted;
+            document.getElementById('exportStatus').value = '';
+
+            // Show modal
+            document.getElementById('exportModal').classList.add('show');
+
+            // 🎯 REGISTER EVENT LISTENERS SETELAH MODAL TERBUKA
+            setTimeout(() => {
+                const startDateInput = document.getElementById('exportStartDate');
+                const endDateInput = document.getElementById('exportEndDate');
+                const statusInput = document.getElementById('exportStatus');
+
+                // Remove existing listeners first (avoid duplicates)
+                startDateInput.removeEventListener('change', updateExportPreview);
+                endDateInput.removeEventListener('change', updateExportPreview);
+                statusInput.removeEventListener('change', updateExportPreview);
+
+                // Add new listeners
+                startDateInput.addEventListener('change', updateExportPreview);
+                endDateInput.addEventListener('change', updateExportPreview);
+                statusInput.addEventListener('change', updateExportPreview);
+
+                console.log('✅ Export event listeners registered');
+
+                // Force preview update
+                updateExportPreview();
+            }, 500);
+        }
+
+        // 📊 CLOSE EXPORT MODAL
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.remove('show');
+        }
+
+        // 📊 UPDATE EXPORT PREVIEW
+        async function updateExportPreview() {
+            console.log('🎯 updateExportPreview called');
+
+            const startDate = document.getElementById('exportStartDate').value;
+            const endDate = document.getElementById('exportEndDate').value;
+            const status = document.getElementById('exportStatus').value;
+
+            // Always show preview
+            document.getElementById('exportPreview').style.display = 'block';
+
+            const previewContent = document.getElementById('previewContent');
+
+            // Show loading
+            previewContent.innerHTML = `
+        <div style="text-align: center; color: #666; padding: 10px 0;">
+            <div class="loading" style="width: 16px; height: 16px; margin: 0 auto 8px;"></div>
+            <div>Memuat data...</div>
+        </div>
+    `;
+
+            try {
+                if (!startDate || !endDate) {
+                    throw new Error('Tanggal mulai dan akhir harus diisi');
+                }
+
+                // Calculate days difference
+                const date1 = new Date(startDate);
+                const date2 = new Date(endDate);
+                const diffTime = Math.abs(date2 - date1);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                const statusText = status ?
+                    status.charAt(0).toUpperCase() + status.slice(1) : 'Semua Status';
+
+                // 🎯 GUNAKAN getAllAttendance BUKAN export API untuk preview
+                const filters = {
+                    start_date: startDate,
+                    end_date: endDate,
+                    status: status
+                };
+
+                console.log('🔍 Fetching preview data with filters:', filters);
+                const result = await apiService.getAllAttendance(filters);
+                const dataCount = result.data ? result.data.length : 0;
+
+                // Update preview
+                previewContent.innerHTML = `
+            <div class="export-preview-item">
+                <span class="export-preview-label">Periode:</span>
+                <span class="export-preview-value">${formatDate(startDate)} s/d ${formatDate(endDate)}</span>
+            </div>
+            <div class="export-preview-item">
+                <span class="export-preview-label">Rentang:</span>
+                <span class="export-preview-value">${diffDays} hari</span>
+            </div>
+            <div class="export-preview-item">
+                <span class="export-preview-label">Status:</span>
+                <span class="export-preview-value">${statusText}</span>
+            </div>
+            <div class="export-preview-item">
+                <span class="export-preview-label">Jumlah Data:</span>
+                <span class="export-preview-value" style="color: ${dataCount > 0 ? '#28a745' : '#dc3545'}">
+                    ${dataCount} record
+                </span>
+            </div>
+            <div class="export-preview-item">
+                <span class="export-preview-label">Format:</span>
+                <span class="export-preview-value">Excel (.xlsx)</span>
+            </div>
+            ${dataCount === 0 ? `
+            <div style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; font-size: 0.75em;">
+                <i class="fas fa-exclamation-triangle" style="color: #f39c12;"></i>
+                Tidak ada data untuk periode ini
+            </div>
+            ` : ''}
+        `;
+
+            } catch (error) {
+                console.error('❌ Error in preview:', error);
+                previewContent.innerHTML = `
+            <div style="color: #dc3545; text-align: center; padding: 10px 0;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>Gagal memuat preview</div>
+                <small>${error.message}</small>
+            </div>
+        `;
+            }
+        }
+
+        // 📊 PROCESS EXPORT
+        async function processExport() {
+            const startDate = document.getElementById('exportStartDate').value;
+            const endDate = document.getElementById('exportEndDate').value;
+            const status = document.getElementById('exportStatus').value;
+
+            if (!startDate || !endDate) {
+                showNotification('Tanggal mulai dan tanggal akhir harus diisi', 'error');
+                return;
+            }
+
+            if (new Date(startDate) > new Date(endDate)) {
+                showNotification('Tanggal mulai tidak boleh lebih besar dari tanggal akhir', 'error');
+                return;
+            }
+
+            // Show loading state
+            const exportBtn = document.getElementById('exportConfirmBtn');
+            const originalText = exportBtn.innerHTML;
+            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuat Excel...';
+            exportBtn.disabled = true;
+
+            try {
+                showNotification('Membuat file Excel, harap tunggu...', 'info');
+
+                const filters = {
+                    start_date: startDate,
+                    end_date: endDate,
+                    status: status
+                };
+
+                console.log('📊 Exporting Excel with filters:', filters);
+                const blob = await apiService.exportAttendanceExcel(filters);
+
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `absensi_${startDate}_${endDate}.xlsx`;
+
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+
+                // Close modal
+                closeExportModal();
+
+                showNotification(`File Excel berhasil diunduh`, 'success');
+
+            } catch (error) {
+                console.error('❌ Error exporting Excel:', error);
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                // Reset button
+                exportBtn.innerHTML = originalText;
+                exportBtn.disabled = false;
+            }
+        }
+
+        function openInMaps(lat, lng) {
+            if (lat && lng) {
+                window.open(`https://maps.google.com/?q=${lat},${lng}`, '_blank');
+            } else {
+                showNotification('Error', 'Koordinat GPS tidak tersedia', 'error');
+            }
+        }
+
+        function renderLocation(lat, lng, locationText) {
+            if (lat && lng) {
+                const distance = calculateDistanceFromOffice(lat, lng);
+                const isWithinRadius = distance <= 500; // 🎯 500 meter radius
+
+                let displayText;
+
+                if (isWithinRadius) {
+                    displayText = '📍 Master Packaging Mataram';
+                } else {
+                    // 🎯 SELALU PAKAI FORMAT JARAK, JANGAN PAKAI locationText
+                    if (distance >= 1000) {
+                        displayText = `📍 ${(distance / 1000).toFixed(1)} km dari Master Packaging`;
+                    } else {
+                        displayText = `📍 ${Math.round(distance)} m dari Master Packaging`;
+                    }
+                }
+
+                const color = isWithinRadius ? '#28a745' : '#ffc107';
+
+                return `
+      <a href="https://maps.google.com/?q=${lat},${lng}" 
+         target="_blank" 
+         style="color: ${color}; text-decoration: none;"
+         title="Buka di Google Maps">
+         ${displayText}
+      </a>
+    `;
+            }
+            return '<span style="color: #dc3545;">❌ Tidak ada GPS</span>';
+        }
+
+        function calculateDistanceFromOffice(lat1, lon1) {
+            const officeLat = -8.6051553;  // Master Packaging Mataram
+            const officeLon = 116.0939254;
+
+            const R = 6371000; // Earth radius in meters
+            const dLat = (lat1 - officeLat) * Math.PI / 180;
+            const dLon = (lon1 - officeLon) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(officeLat * Math.PI / 180) * Math.cos(lat1 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        // ==================== NOTIFICATION & MODAL SYSTEM ====================
+
+        function showNotification(title, message, type = 'info', duration = 3000) {
+            const notification = document.createElement('div');
+            notification.className = `custom-notification ${type}`;
+
+            const icons = {
+                success: 'fas fa-check-circle notification-success',
+                error: 'fas fa-exclamation-circle notification-error',
+                warning: 'fas fa-exclamation-triangle notification-warning',
+                info: 'fas fa-info-circle notification-info'
+            };
+
+            notification.innerHTML = `
+                <i class="${icons[type]} notification-icon"></i>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close">&times;</button>
+            `;
+
+            notificationContainer.appendChild(notification);
+
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            const closeBtn = notification.querySelector('.notification-close');
+            closeBtn.addEventListener('click', () => {
+                closeNotification(notification);
+            });
+
+            if (duration > 0) {
+                setTimeout(() => {
+                    closeNotification(notification);
+                }, duration);
+            }
+
+            return notification;
+        }
+
+        function closeNotification(notification) {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }
+
+        function showModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            customModal.classList.add('show');
+
+            return new Promise((resolve) => {
+                modalResolve = resolve;
+            });
+        }
+
+        function closeModal() {
+            customModal.classList.remove('show');
+            if (modalResolve) {
+                modalResolve(false);
+                modalResolve = null;
+            }
+        }
+
+        function confirmModal() {
+            customModal.classList.remove('show');
+            if (modalResolve) {
+                modalResolve(true);
+                modalResolve = null;
+            }
+        }
+    </script>
+</body>
+
+</html>
