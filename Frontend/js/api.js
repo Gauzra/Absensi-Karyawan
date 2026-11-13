@@ -1,4 +1,8 @@
-const API_BASE_URL = 'https://masterspackaging.my.id/api';
+const API_BASE_URL = (typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('file://'))
+    ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? `${window.location.origin}/api`
+        : (window.location.origin.includes('masterspackaging') ? `${window.location.origin}/api` : `${window.location.origin}/api`))
+    : 'http://localhost:5000/api';
 
 const apiService = {
     async request(endpoint, options = {}) {

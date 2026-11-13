@@ -1,80 +1,116 @@
-# Absesnsi Karyawan Sederhana
+# 📦 Master Packaging — Attendance System
 
-Aplikasi web sistem absensi untuk karyawan, dibangun menggunakan arsitektur *monorepo* sederhana dengan pemisahan folder Backend dan Frontend.
-
-## 🛠️ Tech Stack
-
-* **Frontend:** HTML5, CSS3, Vanilla JavaScript
-* **Backend:** Node.js, Express.js
-* **Database & Lainnya:** MySQL, REST API, JSON Web Token (JWT) / Authentication Middleware
+Aplikasi Sistem Presensi dan Rekapitulasi Absensi Karyawan berbasis **Geolocation (GPS)** dan **Verifikasi Kamera Wajah** terintegrasi dengan Dashboard Administrator.
 
 ---
 
-## 📁 Struktur Project
+## 🌟 Fitur Utama
+
+### 👤 Karyawan (Dine-in / Mobile Dashboard)
+- **Otentikasi Akun**: Login melalui akun internal (username/password) atau Google OAuth.
+- **Validasi Geolocation GPS**: Presensi kehadiran hanya bisa dilakukan bila karyawan berada dalam radius kantor yang ditentukan.
+- **Foto Kamera Real-time**: Pengambilan foto wajah langsung melalui webcam/kamera smartphone saat check-in.
+- **Deteksi Keterlambatan Otomatis**: Sistem otomatis menandai status *Tepat Waktu*, *Terlambat* (beserta durasi menitnya), atau *Izin*.
+- **Pengajuan Izin / Sakit**: Form pengajuan izin kerja lengkap dengan catatan alasan.
+- **Riwayat & Statistik**: Grafik dan histori kehadiran bulanan karyawan.
+
+### 🛡️ Administrator (Admin Dashboard)
+- **Live Monitoring Kehadiran**: Rekapitulasi siapa saja yang hadir, terlambat, izin, atau alfa hari ini.
+- **Inspeksi Foto & Titik GPS**: Tombol preview foto kehadiran dan koordinat latitude/longitude presensi.
+- **Filter Fleksibel**: Pencarian berdasarkan rentang tanggal dan status kehadiran.
+- **Export Laporan**: Cetak / export data presensi ke format Excel & CSV.
+- **Pengaturan Perusahaan**: Atur titik koordinat kantor, radius jangkauan presensi (meter), dan batas jam toleransi.
+
+---
+
+## 📁 Struktur Direktori
 
 ```text
 masterpackaging/
 ├── Backend/
-│   ├── config/          # Konfigurasi database & koneksi
-│   ├── controllers/     # Logika bisnis (admin, attendance, auth)
-│   ├── middleware/      # Middleware autentikasi & keamanan
-│   ├── routes/          # Definisi endpoint API
-│   ├── .env             # Variabel lingkungan (Environment variables)
-│   ├── package.json     # Dependensi backend
-│   └── server.js        # Entry point server backend
-└── Frontend/
-    ├── images/          # Aset gambar, ikon, dan logo
-    ├── js/              # Skrip JavaScript klien (API handler, dll)
-    ├── admin.html       # Halaman panel admin
-    ├── dashboard.html   # Halaman dashboard utama
-    └── login.html       # Halaman autentikasi masuk
-
+│   ├── config/             # Konfigurasi koneksi MySQL & Google OAuth
+│   ├── controllers/        # Logika Auth, Absensi GPS/Foto, & Admin
+│   ├── middleware/         # Middleware otentikasi & proteksi role
+│   ├── routes/             # Endpoint rute Express.js
+│   ├── .env                # File konfigurasi environment
+│   ├── cleanup-photos.js   # Script maintenance foto
+│   ├── package.json        # Manifest dependensi backend
+│   └── server.js           # Server utama Express.js
+├── Frontend/
+│   ├── images/             # Logo & asset icon
+│   ├── js/
+│   │   └── api.js          # API Client & auto-detect URL localhost/production
+│   ├── login.html          # Halaman login modern
+│   ├── dashboard.html      # Dashboard absensi kamera & GPS karyawan
+│   └── admin.html          # Dashboard administrator & export rekap
+├── schema.sql              # Skema tabel database MySQL lengkap + dummy data
+├── ANALISIS_KEKURANGAN.md  # Laporan evaluasi teknis proyek
+└── README.md               # Dokumentasi proyek
 ```
-🚀 Cara Menjalankan Project (Installation & Setup)
-Ikuti langkah-langkah di bawah ini untuk menjalankan project secara lokal di komputer kamu:
 
-1. Clone Repository
-git clone [https://github.com/USERNAME/Absensi-Karyawan.git](https://github.com/USERNAME/Absensi-Karyawan.git)
-cd masterpackaging
+---
 
-2. Konfigurasi Backend
-Masuk ke direktori Backend dan instal dependensi yang dibutuhkan:
-cd Backend
-npm install
+## 🚀 Panduan Instalasi & Menjalankan Proyek
 
-3. Konfigurasi Environment (.env)
-Buat file .env di dalam folder Backend jika belum ada, lalu sesuaikan konfigurasi berikut:
-PORT=5000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=nama_database_kamu
-JWT_SECRET=rahasia_kode_kamu
+### 1. Prasyarat
+- [Node.js](https://nodejs.org/) (versi 16 ke atas)
+- [MySQL Database Server](https://www.mysql.com/) (atau via XAMPP / Laragon)
 
-4. Jalankan Server Backend
-Bash
-npm run dev
-# atau
-node server.js
-(Server backend biasanya akan berjalan di http://localhost:5000)
+### 2. Setup Database
+1. Buka phpMyAdmin atau MySQL CLI.
+2. Impor file **`schema.sql`** yang ada di root direktori:
+   ```sql
+   source D:/Project/masterpackaging/schema.sql;
+   ```
+   *(Skema ini otomatis membuat database `masterpackaging`, tabel `users`, `attendance`, `company_settings`, serta akun demo)*.
 
-5. Jalankan Frontend
-Kamu bisa membuka folder Frontend menggunakan ekstensi Live Server di VS Code.
-Atau buka langsung file login.html di browser pilihanmu.
+### 3. Konfigurasi Backend
+1. Masuk ke folder `Backend`:
+   ```bash
+   cd Backend
+   ```
+2. Buat atau sesuaikan file **`.env`** (sesuaikan port & kredensial database):
+   ```env
+   PORT=5000
+   NODE_ENV=development
+   
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=
+   DB_NAME=masterpackaging
+   
+   # Admin Credentials
+   ADMIN_EMAIL=admin@masterpackaging.com
+   ADMIN_PASSWORD=admin123
+   ```
+3. Install dependensi:
+   ```bash
+   npm install
+   ```
+4. Jalankan backend:
+   ```bash
+   npm start
+   # atau untuk mode dev:
+   npm run dev
+   ```
 
-📌 Fitur Utama
-Autentikasi Pengguna: Sistem Login yang aman menggunakan Middleware.
-Manajemen Admin: Pengaturan data dan kontrol administratif (admin.html).
-Sistem Absensi: Pencatatan kehadiran terintegrasi dengan backend (attendance).
-Dashboard Interaktif: Antarmuka pengguna berbasis HTML/JS murni yang responsif.
+### 4. Akses Aplikasi di Browser
+Buka browser dan buka:
+- 🌐 **Halaman Login**: [http://localhost:5000/login.html](http://localhost:5000/login.html)
+- 📊 **Dashboard Karyawan**: [http://localhost:5000/dashboard.html](http://localhost:5000/dashboard.html)
+- 🛡️ **Panel Admin**: [http://localhost:5000/admin.html](http://localhost:5000/admin.html)
 
-📄 License
-Project ini dibuat untuk kebutuhan internal / pengembangan bisnis Master Packaging.
+---
 
-### Cara Memasukkannya ke Project:
-1. Di VS Code, buat file baru di dalam folder `masterpackaging` dengan nama **`README.md`**.
-2. Salin teks di atas dan *paste* ke dalam file tersebut, lalu simpan (`Ctrl + S`).
-3. Setelah itu, kamu bisa melanjutkan proses *commit* dan *push* ke GitHub dengan perintah:
-   git add README.md
-   git commit -m "docs: add comprehensive README.md"
-   git push origin main
+## 🔐 Akun Demo Siap Pakai
+
+| Role | Username / Email | Password |
+|---|---|---|
+| **Admin** | `admin` *(atau admin@masterpackaging.com)* | `admin123` |
+| **Karyawan** | `budi` *(atau budi@masterpackaging.com)* | `karyawan123` |
+
+---
+
+## 📄 Lisensi & Kontribusi
+Proyek ini dikembangkan untuk kebutuhan internal Master Packaging Mataram.
+
